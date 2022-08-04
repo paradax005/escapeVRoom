@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "994009861971",
+    "project_id": "escapecommunity-b33d1",
+    "storage_bucket": "escapecommunity-b33d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994009861971:android:188a1051811bb8f18a5ba6",
+        "android_client_info": {
+          "package_name": "com.example.escaperoom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "994009861971-o4pn50cm0ojm2fmdk9s4gkenk03b9lnl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsCdI8UFHbYry_tcmhy6oS2-hBS-OUoxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994009861971-o4pn50cm0ojm2fmdk9s4gkenk03b9lnl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
