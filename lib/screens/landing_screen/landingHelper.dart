@@ -1,4 +1,5 @@
 import 'package:escaperoom/screens/home/home.dart';
+import 'package:escaperoom/screens/landing_screen/landing_service.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -196,12 +197,18 @@ class LandingHelpers with ChangeNotifier {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Provider.of<LandingServices>(context, listen: false)
+                        .passwordLessSignIn(context),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         MaterialButton(
                           color: blueColor,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Provider.of<LandingServices>(context, listen: false)
+                                .loginSheet(context);
+                          },
                           child: Text(
                             "Sign In",
                             style: TextStyle(color: whiteColor),
@@ -209,7 +216,11 @@ class LandingHelpers with ChangeNotifier {
                         ),
                         MaterialButton(
                           color: redColor,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Provider.of<LandingServices>(context, listen: false)
+                                .signInSheet(context);
+                          },
                           child: Text(
                             "Sign Up",
                             style: TextStyle(color: whiteColor),

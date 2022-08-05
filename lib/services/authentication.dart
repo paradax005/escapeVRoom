@@ -15,17 +15,18 @@ class Authentication with ChangeNotifier {
 
     User user = userCredential.user!;
     userUid = user.uid;
-    print(userUid);
+    print('userId => $userUid');
     notifyListeners();
   }
 
   Future createAccount(String email, String password) async {
     UserCredential userCredential = await firebaseAuth
-        .signInWithEmailAndPassword(email: email, password: password);
+        .createUserWithEmailAndPassword(email: email, password: password);
 
     User? user = userCredential.user;
     userUid = user!.uid;
-    print(userUid);
+    // ignore: avoid_print
+    print(' userid => $userUid');
     notifyListeners();
   }
 
