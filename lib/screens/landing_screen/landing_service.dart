@@ -1,63 +1,112 @@
+// ignore_for_file: slash_for_doc_comments
+
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
 import 'package:escaperoom/screens/home/home.dart';
+import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
 import 'package:escaperoom/services/authentication.dart';
+import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class LandingServices with ChangeNotifier {
+  /**
+   * Controllers 
+   */
   TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  Widget passwordLessSignIn(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
-      width: MediaQuery.of(context).size.width,
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('allUsers').snapshots(),
-        builder: ((context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return ListView(
-              children:
-                  snapshot.data!.docs.map((DocumentSnapshot documentSnapshot) {
-                return ListTile(
-                  trailing: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      FontAwesomeIcons.trashCan,
-                      color: redColor,
-                    ),
+
+  TextEditingController emailLoginController = TextEditingController();
+  TextEditingController passwordLoginController = TextEditingController();
+
+  /**
+   * Methods 
+   */
+
+  showUserAvatar(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.3,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: blueGreyColor,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Divider(
+                    thickness: 3,
+                    color: whiteColor,
                   ),
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      documentSnapshot.get('userimage'),
-                    ),
+                ),
+                CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: FileImage(
+                    Provider.of<LandingUtils>(context, listen: false)
+                        .userAvatar!,
                   ),
-                  title: Text(
-                    documentSnapshot.get('username'),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: greenColor),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        onPressed: () {
+                          Provider.of<LandingUtils>(context, listen: false)
+                              .pickUserAvatar(context, ImageSource.gallery);
+                        },
+                        child: Text(
+                          'Reselect',
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                            decorationColor: whiteColor,
+                          ),
+                        ),
+                      ),
+                      MaterialButton(
+                        color: blueColor,
+                        onPressed: () {
+                          Provider.of<FirebaseOperation>(context, listen: false)
+                              .uploadUserAvatar(context)
+                              .whenComplete(() {
+                            Navigator.pop(context);
+                            signInSheet(context);
+                          });
+                        },
+                        child: Text(
+                          'Confirm Image',
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                            decorationColor: whiteColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: Text(
-                    documentSnapshot.get('useremail'),
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: greenColor),
-                  ),
-                );
-              }).toList(),
-            );
-          }
-        }),
-      ),
-    );
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   Future loginSheet(BuildContext context) {
@@ -92,7 +141,7 @@ class LandingServices with ChangeNotifier {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   child: TextField(
-                    controller: emailController,
+                    controller: emailLoginController,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 2,
@@ -120,7 +169,8 @@ class LandingServices with ChangeNotifier {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   child: TextField(
-                    controller: passwordController,
+                    controller: passwordLoginController,
+                    obscureText: true,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 2,
@@ -153,16 +203,18 @@ class LandingServices with ChangeNotifier {
                         Provider.of<Authentication>(context, listen: false)
                             .logIntoAccount(
                                 emailController.text, passwordController.text)
-                            .whenComplete(
-                              () => Navigator.pushReplacement(
-                                context,
-                                PageTransition(
-                                  child: const HomeScreen(),
-                                  type: PageTransitionType.fade,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              ),
-                            );
+                            .whenComplete(() {
+                          emailLoginController.clear();
+                          passwordLoginController.clear();
+                          Navigator.pushReplacement(
+                            context,
+                            PageTransition(
+                              child: const HomeScreen(),
+                              type: PageTransitionType.fade,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        });
                       } else {
                         warningText(context, "Fill all the data");
                       }
@@ -209,7 +261,10 @@ class LandingServices with ChangeNotifier {
               Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: CircleAvatar(
-                  backgroundColor: whiteColor,
+                  backgroundImage: FileImage(
+                    Provider.of<LandingUtils>(context, listen: false)
+                        .getUserAvatar,
+                  ),
                   radius: 60,
                 ),
               ),
@@ -306,7 +361,31 @@ class LandingServices with ChangeNotifier {
                     if (emailController.text.isNotEmpty) {
                       Provider.of<Authentication>(context, listen: false)
                           .createAccount(
-                              emailController.text, passwordController.text);
+                              emailController.text, passwordController.text)
+                          .whenComplete(() {
+                        print('waiting to create a new collection ! ');
+                        Provider.of<FirebaseOperation>(context, listen: false)
+                            .createUserCollection(context, {
+                          'userId': Provider.of<Authentication>(context,
+                                  listen: false)
+                              .getUserId,
+                          'useremail': emailController.text,
+                          'username': usernameController.text,
+                          'userpassword': passwordController.text,
+                          'userimage':
+                              Provider.of<LandingUtils>(context, listen: false)
+                                  .getUserAvatarUrl
+                        }).whenComplete(() {
+                          Navigator.pushReplacement(
+                            context,
+                            PageTransition(
+                              child: const HomeScreen(),
+                              type: PageTransitionType.fade,
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        });
+                      });
                     } else {
                       warningText(context, "Fill all the data");
                     }
@@ -343,5 +422,58 @@ class LandingServices with ChangeNotifier {
             ),
           );
         });
+  }
+
+  /**
+   * Widgets 
+   */
+
+  Widget passwordHistorySignIn(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.width,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: ((context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return ListView(
+              children:
+                  snapshot.data!.docs.map((DocumentSnapshot documentSnapshot) {
+                return ListTile(
+                  trailing: IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      FontAwesomeIcons.trashCan,
+                      color: redColor,
+                    ),
+                  ),
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      documentSnapshot.get('userimage'),
+                    ),
+                  ),
+                  title: Text(
+                    documentSnapshot.get('username'),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: greenColor),
+                  ),
+                  subtitle: Text(
+                    documentSnapshot.get('useremail'),
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: greenColor),
+                  ),
+                );
+              }).toList(),
+            );
+          }
+        }),
+      ),
+    );
   }
 }

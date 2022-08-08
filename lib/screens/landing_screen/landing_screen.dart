@@ -21,6 +21,7 @@ class _LandingScreenState extends State<LandingScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Provider.of<LandingHelpers>(context, listen: false)
                   .bodyImage(context),
@@ -41,17 +42,19 @@ class _LandingScreenState extends State<LandingScreen> {
 Widget backgroundColor() {
   return Container(
     decoration: BoxDecoration(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(12),
+        topRight: Radius.circular(12),
+      ),
       gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: const [
-            0.5,
-            0.9
-          ],
-          colors: [
-            darkColor,
-            blueGreyColor,
-          ]),
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        stops: const [0.5, 0.9],
+        colors: [
+          darkColor,
+          blueGreyColor,
+        ],
+      ),
     ),
   );
 }
