@@ -1,9 +1,9 @@
-import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:escaperoom/constants/appcolors.dart';
 import 'package:escaperoom/screens/chatroom/chatroom.dart';
 import 'package:escaperoom/screens/feed/feed.dart';
 import 'package:escaperoom/screens/home/homePageHelper.dart';
 import 'package:escaperoom/screens/profile/profile_screen.dart';
+import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +17,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PageController homePageController = PageController();
   int pageIndex = 0;
+
+  @override
+  void initState() {
+    Provider.of<FirebaseOperation>(context, listen: false)
+        .initUserData(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         children: const [FeedScreen(), ChatRoomScreen(), ProfileScreen()],
       ),
-      bottomNavigationBar: Provider.of<HomePageHelper>(context,listen: false)
-          .bottomNavBar(pageIndex, homePageController),
+      bottomNavigationBar: Provider.of<HomePageHelper>(context, listen: false)
+          .bottomNavBar(context,pageIndex, homePageController),
     );
   }
 }

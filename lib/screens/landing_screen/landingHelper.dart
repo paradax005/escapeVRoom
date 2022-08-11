@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:escaperoom/screens/home/home.dart';
 import 'package:escaperoom/screens/landing_screen/landing_service.dart';
 import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
@@ -196,8 +198,8 @@ class LandingHelpers with ChangeNotifier {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Provider.of<LandingServices>(context, listen: false)
-                          .passwordHistorySignIn(context),
+                      // Provider.of<LandingServices>(context, listen: false)
+                      //     .passwordHistorySignIn(context),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -218,8 +220,7 @@ class LandingHelpers with ChangeNotifier {
                             color: redColor,
                             onPressed: () {
                               Navigator.pop(context);
-                              Provider.of<LandingUtils>(context,
-                                      listen: false)
+                              Provider.of<LandingUtils>(context, listen: false)
                                   .selectAvatarOptionSheet(context);
                             },
                             child: Text(

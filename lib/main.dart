@@ -1,5 +1,5 @@
 import 'package:escaperoom/constants/appcolors.dart';
-import 'package:escaperoom/screens/home/home.dart';
+import 'package:escaperoom/screens/feed/feedHelper.dart';
 import 'package:escaperoom/screens/home/homePageHelper.dart';
 import 'package:escaperoom/screens/landing_screen/landingHelper.dart';
 import 'package:escaperoom/screens/landing_screen/landing_service.dart';
@@ -8,6 +8,7 @@ import 'package:escaperoom/screens/profile/profile_helper.dart';
 import 'package:escaperoom/screens/splash_screen/splash_screen.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
+import 'package:escaperoom/utils/uploadPost.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,9 +39,11 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Poppins',
           canvasColor: Colors.transparent,
         ),
-        home: const HomeScreen(),
+        home: const SplashScreen(),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => FeedHelpers()),
+        ChangeNotifierProvider(create: (_) => UploadPost()),
         ChangeNotifierProvider(create: (_) => ProfileHelper()),
         ChangeNotifierProvider(create: (_) => HomePageHelper()),
         ChangeNotifierProvider(create: (_) => LandingHelpers()),

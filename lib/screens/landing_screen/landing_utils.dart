@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'package:escaperoom/screens/landing_screen/landing_service.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
@@ -25,7 +25,7 @@ class LandingUtils with ChangeNotifier {
     userAvatar != null
         ? Provider.of<FirebaseOperation>(context, listen: false)
             .uploadUserAvatar(context)
-        : print('error occured when uploading the image ');
+        : null;
   }
 
   Future selectAvatarOptionSheet(BuildContext context) async {

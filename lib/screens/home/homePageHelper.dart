@@ -1,10 +1,16 @@
+// ignore_for_file: file_names
+
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:escaperoom/constants/appcolors.dart';
+import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePageHelper with ChangeNotifier {
-  Widget bottomNavBar(int index, PageController controller) {
+  
+  Widget bottomNavBar(
+      BuildContext context, int index, PageController controller) {
     return CustomNavigationBar(
       currentIndex: index,
       bubbleCurve: Curves.bounceIn,
@@ -24,10 +30,18 @@ class HomePageHelper with ChangeNotifier {
         CustomNavigationBarItem(icon: const Icon(EvaIcons.home)),
         CustomNavigationBarItem(icon: const Icon(Icons.message_rounded)),
         CustomNavigationBarItem(
-            icon: CircleAvatar(
-          radius: 35,
-          backgroundColor: blueGreyColor,
-        )),
+          icon: CircleAvatar(
+            radius: 35,
+            backgroundColor: blueGreyColor,
+            backgroundImage:
+                Provider.of<FirebaseOperation>(context, listen: false)
+                            .getInitUserImage != null
+                    ? NetworkImage(
+                        Provider.of<FirebaseOperation>(context, listen: false)
+                            .getInitUserImage!)
+                    : null,
+          ),
+        ),
       ],
     );
   }

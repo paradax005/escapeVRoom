@@ -1,8 +1,4 @@
 // ignore_for_file: slash_for_doc_comments
-
-import 'dart:ui';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
 import 'package:escaperoom/screens/home/home.dart';
 import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
@@ -24,6 +20,8 @@ class LandingServices with ChangeNotifier {
 
   TextEditingController emailLoginController = TextEditingController();
   TextEditingController passwordLoginController = TextEditingController();
+
+  final List historyUsers = [];
 
   /**
    * Methods 
@@ -199,10 +197,10 @@ class LandingServices with ChangeNotifier {
                   child: FloatingActionButton(
                     elevation: 8,
                     onPressed: () {
-                      if (emailController.text.isNotEmpty) {
+                      if (emailLoginController.text.isNotEmpty) {
                         Provider.of<Authentication>(context, listen: false)
-                            .logIntoAccount(
-                                emailController.text, passwordController.text)
+                            .logIntoAccount(emailLoginController.text,
+                                passwordLoginController.text)
                             .whenComplete(() {
                           emailLoginController.clear();
                           passwordLoginController.clear();
@@ -363,28 +361,33 @@ class LandingServices with ChangeNotifier {
                           .createAccount(
                               emailController.text, passwordController.text)
                           .whenComplete(() {
-                        print('waiting to create a new collection ! ');
-                        Provider.of<FirebaseOperation>(context, listen: false)
-                            .createUserCollection(context, {
-                          'userId': Provider.of<Authentication>(context,
-                                  listen: false)
-                              .getUserId,
-                          'useremail': emailController.text,
-                          'username': usernameController.text,
-                          'userpassword': passwordController.text,
-                          'userimage':
-                              Provider.of<LandingUtils>(context, listen: false)
-                                  .getUserAvatarUrl
-                        }).whenComplete(() {
-                          Navigator.pushReplacement(
-                            context,
-                            PageTransition(
-                              child: const HomeScreen(),
-                              type: PageTransitionType.fade,
-                              duration: const Duration(seconds: 1),
-                            ),
-                          );
-                        });
+                        print('waiting to add a new document ! ');
+                        try {
+                          Provider.of<FirebaseOperation>(context, listen: false)
+                              .createUserCollection(context, {
+                            'userId': Provider.of<Authentication>(context,
+                                    listen: false)
+                                .getUserId,
+                            'useremail': emailController.text,
+                            'username': usernameController.text,
+                            'userpassword': passwordController.text,
+                            'userimage': Provider.of<LandingUtils>(context,
+                                    listen: false)
+                                .getUserAvatarUrl
+                          }).whenComplete(() {
+                            print('Document created sucessfully ! ');
+                            Navigator.pushReplacement(
+                              context,
+                              PageTransition(
+                                child: const HomeScreen(),
+                                type: PageTransitionType.fade,
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          });
+                        } catch (e) {
+                          print('an error was occured ${e.toString()}');
+                        }
                       });
                     } else {
                       warningText(context, "Fill all the data");
@@ -418,7 +421,10 @@ class LandingServices with ChangeNotifier {
               ),
             ),
             child: Center(
-              child: Text(message),
+              child: Text(
+                message,
+                style: TextStyle(color: whiteColor),
+              ),
             ),
           );
         });
@@ -428,21 +434,39 @@ class LandingServices with ChangeNotifier {
    * Widgets 
    */
 
+/*
   Widget passwordHistorySignIn(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.4,
       width: MediaQuery.of(context).size.width,
-      child: StreamBuilder<QuerySnapshot>(
+      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else {
+          }
+        
+          else if (!snapshot.hasData) {
+            return Center(
+              child: Text(
+                'No Data set',
+                style: TextStyle(
+                  color: whiteColor,
+                  fontSize: 16,
+                ),
+              ),
+            );
+          }
+          else {
+            
             return ListView(
               children:
-                  snapshot.data!.docs.map((DocumentSnapshot documentSnapshot) {
+              
+                  snapshot.data!.docs.map((DocumentSnapshot documentSnapshot){
+                  //   Map<String, dynamic> data =
+                  // documentSnapshot.data() as Map<String, dynamic>;
                 return ListTile(
                   trailing: IconButton(
                     onPressed: () {},
@@ -453,16 +477,16 @@ class LandingServices with ChangeNotifier {
                   ),
                   leading: CircleAvatar(
                     backgroundImage: NetworkImage(
-                      documentSnapshot.get('userimage'),
+                      documentSnapshot.get('userimage') ?? null,
                     ),
                   ),
                   title: Text(
-                    documentSnapshot.get('username'),
+                    documentSnapshot.get('username') ??'',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: greenColor),
                   ),
                   subtitle: Text(
-                    documentSnapshot.get('useremail'),
+                    documentSnapshot.get('useremail') ?? '',
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -472,8 +496,9 @@ class LandingServices with ChangeNotifier {
               }).toList(),
             );
           }
-        }),
+        }
+        ),
       ),
     );
-  }
+  }*/
 }

@@ -25,7 +25,10 @@ class ProfileScreen extends StatelessWidget {
               EvaIcons.logOutOutline,
               color: lightBlueColor,
             ),
-            onPressed: null,
+            onPressed: () {
+              Provider.of<ProfileHelper>(context, listen: false)
+                  .logOutDialog(context);
+            },
           ),
         ],
         backgroundColor: blueGreyColor.withOpacity(0.4),
@@ -51,13 +54,14 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
+          margin: const EdgeInsets.only(top: 8, bottom: 8),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             color: blueGreyColor,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: StreamBuilder<DocumentSnapshot>(
+          child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
               stream: FirebaseFirestore.instance
                   .collection('users')
                   .doc(Provider.of<Authentication>(context, listen: false)
@@ -71,10 +75,14 @@ class ProfileScreen extends StatelessWidget {
                 } else {
                   return Column(
                     children: [
-                      Provider.of<ProfileHelper>(context,listen: false).headerProfile(context, snapshot),
-                      Provider.of<ProfileHelper>(context,listen: false).divider(context),
-                      Provider.of<ProfileHelper>(context,listen: false).middleProfile(context, snapshot),
-                      Provider.of<ProfileHelper>(context,listen: false).footerProfile(context),
+                      Provider.of<ProfileHelper>(context, listen: false)
+                          .headerProfile(context, snapshot),
+                      Provider.of<ProfileHelper>(context, listen: false)
+                          .divider(context),
+                      Provider.of<ProfileHelper>(context, listen: false)
+                          .middleProfile(context, snapshot),
+                      Provider.of<ProfileHelper>(context, listen: false)
+                          .footerProfile(context),
                     ],
                   );
                 }

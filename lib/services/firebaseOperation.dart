@@ -1,8 +1,11 @@
+// ignore_for_file: file_names
+
+import 'package:escaperoom/models/post.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FirebaseOperation with ChangeNotifier {
@@ -20,15 +23,14 @@ class FirebaseOperation with ChangeNotifier {
     imageUploadTask = imageReference.putFile(
         Provider.of<LandingUtils>(context, listen: false).getUserAvatar);
 
-    await imageUploadTask
-        .whenComplete(() => print('Image uploaded sucessfully'));
+    await imageUploadTask;
 
     imageReference.getDownloadURL().then((url) {
       Provider.of<LandingUtils>(context, listen: false).userAvatarUrl =
           url.toString();
 
-      print(
-          'useravatar url => ${Provider.of<LandingUtils>(context, listen: false).userAvatarUrl}');
+      // print(
+      //     'useravatar url => ${Provider.of<LandingUtils>(context, listen: false).userAvatarUrl}');
       notifyListeners();
     });
   }
@@ -55,5 +57,17 @@ class FirebaseOperation with ChangeNotifier {
       print(initUserImage);
       notifyListeners();
     });
+  }
+
+  Future uploadPostData(String postId, dynamic data) async {
+    FirebaseFirestore.instance.collection('posts').doc(postId).set(data);
+  }
+
+  Stream<List<Post>> readPosts() {
+    return  FirebaseFirestore.instance
+        .collection('posts')
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Post.fromJson(doc.data())).toList());
   }
 }
