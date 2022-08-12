@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/models/post.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
+import 'package:escaperoom/utils/postFunctionality.dart';
 import 'package:escaperoom/utils/uploadPost.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +31,7 @@ class FeedHelpers with ChangeNotifier {
               color: whiteColor,
               fontWeight: FontWeight.bold,
               fontSize: 20.0,
-            ), // TextStyle
+            ),
             children: <TextSpan>[
               TextSpan(
                 text: 'VRoom',
@@ -37,9 +39,9 @@ class FeedHelpers with ChangeNotifier {
                   color: blueColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 20.0,
-                ), // TextStyle
-              ) // TextSpan
-            ]), //<TextSpan>[]// TextSpan
+                ),
+              )
+            ]),
       ),
     );
   }
@@ -181,6 +183,22 @@ class FeedHelpers with ChangeNotifier {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         GestureDetector(
+                          onLongPress: () {
+                            Provider.of<PostFunctionality>(context,
+                                    listen: false)
+                                .showLikes(context,post.caption);
+                          },
+                          onTap: () {
+                            Provider.of<PostFunctionality>(context,
+                                    listen: false)
+                                .addLike(
+                              context,
+                              post.caption,
+                              Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserId,
+                            );
+                          },
                           child: Icon(
                             FontAwesomeIcons.heart,
                             color: redColor,
@@ -190,13 +208,31 @@ class FeedHelpers with ChangeNotifier {
                         const SizedBox(
                           width: 8,
                         ),
-                        Text(
-                          '0',
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                          ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .doc(post.caption)
+                              .collection('Likes')
+                              .snapshots(),
+                          builder: ((context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              print(
+                                  'Number of likes : ${snapshot.data!.docs.length}');
+                              return Text(
+                                snapshot.data!.docs.length.toString(),
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                ),
+                              );
+                            }
+                          }),
                         ),
                       ],
                     ),
@@ -207,6 +243,11 @@ class FeedHelpers with ChangeNotifier {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         GestureDetector(
+                          onTap: () {
+                            Provider.of<PostFunctionality>(context,
+                                    listen: false)
+                                .showCommentSheet(context, post.caption);
+                          },
                           child: Icon(
                             FontAwesomeIcons.comment,
                             color: blueColor,

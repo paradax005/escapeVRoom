@@ -8,6 +8,7 @@ import 'package:escaperoom/screens/profile/profile_helper.dart';
 import 'package:escaperoom/screens/splash_screen/splash_screen.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
+import 'package:escaperoom/utils/postFunctionality.dart';
 import 'package:escaperoom/utils/uploadPost.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         home: const SplashScreen(),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => PostFunctionality()),
         ChangeNotifierProvider(create: (_) => FeedHelpers()),
         ChangeNotifierProvider(create: (_) => UploadPost()),
         ChangeNotifierProvider(create: (_) => ProfileHelper()),
