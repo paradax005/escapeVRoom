@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -95,9 +94,9 @@ class PostFunctionality with ChangeNotifier {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.5,
+                    height: MediaQuery.of(context).size.height * 0.54,
                     child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('posts')
@@ -114,9 +113,9 @@ class PostFunctionality with ChangeNotifier {
                           return ListView(
                             children: snapshot.data!.docs
                                 .map((DocumentSnapshot documentSnapshot) {
-                              return Container(
+                              return SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.11,
+                                    MediaQuery.of(context).size.height * 0.13,
                                 width: MediaQuery.of(context).size.width,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -124,35 +123,32 @@ class PostFunctionality with ChangeNotifier {
                                   children: [
                                     Row(
                                       children: [
-                                        GestureDetector(
-                                          child: CircleAvatar(
-                                            backgroundColor: darkColor,
-                                            radius: 15.0,
-                                            backgroundImage: NetworkImage(
-                                                documentSnapshot['userimage']),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: GestureDetector(
+                                            child: CircleAvatar(
+                                              backgroundColor: darkColor,
+                                              radius: 15.0,
+                                              backgroundImage: NetworkImage(
+                                                  documentSnapshot[
+                                                      'userimage']),
+                                            ),
                                           ),
                                         ),
-                                        Column(
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    documentSnapshot[
-                                                        'username'],
-                                                    style: TextStyle(
-                                                      color: whiteColor,
-                                                      fontSize: 12.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                         Container(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: Text(
+                                            documentSnapshot['username'],
+                                            style: TextStyle(
+                                              color: whiteColor,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
                                           child: Row(
                                             children: [
                                               IconButton(
@@ -160,6 +156,7 @@ class PostFunctionality with ChangeNotifier {
                                                 icon: Icon(
                                                   FontAwesomeIcons.arrowUp,
                                                   color: blueColor,
+                                                  size: 14,
                                                 ),
                                               ),
                                               Text(
@@ -175,13 +172,7 @@ class PostFunctionality with ChangeNotifier {
                                                 icon: Icon(
                                                   FontAwesomeIcons.reply,
                                                   color: yellowColor,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  FontAwesomeIcons.trashCan,
-                                                  color: redColor,
+                                                  size: 14.0,
                                                 ),
                                               ),
                                             ],
@@ -189,7 +180,8 @@ class PostFunctionality with ChangeNotifier {
                                         ),
                                       ],
                                     ),
-                                    Container(
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
                                       child: Row(
                                         children: [
                                           IconButton(
@@ -200,19 +192,28 @@ class PostFunctionality with ChangeNotifier {
                                               size: 12,
                                             ),
                                           ),
-                                          Container(
+                                          SizedBox(
                                             width: MediaQuery.of(context)
-                                                .size
-                                                .width,
+                                                    .size
+                                                    .width *
+                                                0.7,
                                             child: Text(
                                               documentSnapshot['comment'],
+                                              style: TextStyle(
+                                                color: whiteColor,
+                                              ),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              FontAwesomeIcons.trashCan,
+                                              color: redColor,
+                                              size: 14.0,
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Divider(
-                                      color: darkColor.withOpacity(0.2),
                                     ),
                                   ],
                                 ),
@@ -251,6 +252,12 @@ class PostFunctionality with ChangeNotifier {
                       FloatingActionButton(
                         onPressed: () {
                           print('Adding Comment ! ');
+                          addComment(context, docId,
+                                  commentController.text.toString().trim())
+                              .whenComplete(() {
+                            commentController.clear();
+                            notifyListeners();
+                          });
                         },
                         backgroundColor: greenColor,
                         child: Icon(
@@ -385,6 +392,119 @@ class PostFunctionality with ChangeNotifier {
                   ),
                 ],
               ),
+            ),
+          );
+        });
+  }
+
+  showRewards(BuildContext context, String postId) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.2,
+            decoration: BoxDecoration(
+              color: blueGreyColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Divider(
+                    thickness: 3,
+                    color: whiteColor,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  width: 110,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: whiteColor,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Rewards",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(top: 12),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('awards')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: snapshot.data!.docs
+                                  .map((DocumentSnapshot documentSnapshot) {
+                                return GestureDetector(
+                                  onTap: () async {
+                                    Provider.of<FirebaseOperation>(context,
+                                            listen: false)
+                                        .addAward(postId, {
+                                      'username':
+                                          Provider.of<FirebaseOperation>(
+                                                  context,
+                                                  listen: false)
+                                              .getInitUserName,
+                                      'useremail':
+                                          Provider.of<FirebaseOperation>(
+                                                  context,
+                                                  listen: false)
+                                              .getInitUserEmail,
+                                      'userimage':
+                                          Provider.of<FirebaseOperation>(
+                                                  context,
+                                                  listen: false)
+                                              .getInitUserImage,
+                                      'userid': Provider.of<Authentication>(
+                                              context,
+                                              listen: false)
+                                          .getUserId,
+                                      'time': Timestamp.now(),
+                                      'award': documentSnapshot['image'],
+                                    }).whenComplete(() {
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 8, right: 8),
+                                    width: 50,
+                                    height: 50,
+                                    child: Image.network(
+                                        documentSnapshot['image']),
+                                  ),
+                                );
+                              }).toList());
+                        }
+                      }),
+                ),
+              ],
             ),
           );
         });

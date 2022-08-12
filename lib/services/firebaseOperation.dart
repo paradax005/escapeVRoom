@@ -64,10 +64,19 @@ class FirebaseOperation with ChangeNotifier {
   }
 
   Stream<List<Post>> readPosts() {
-    return  FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection('posts')
+        .orderBy('time', descending: true)
         .snapshots()
         .map((snapshot) =>
             snapshot.docs.map((doc) => Post.fromJson(doc.data())).toList());
+  }
+
+  Future addAward(String postId, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('awards')
+        .add(data);
   }
 }

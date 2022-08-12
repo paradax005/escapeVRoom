@@ -70,7 +70,7 @@ class FeedHelpers with ChangeNotifier {
                   style: TextStyle(color: whiteColor),
                 );
               } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
                 final posts = snapshot.data!.toList();
                 return ListView.builder(
@@ -85,13 +85,6 @@ class FeedHelpers with ChangeNotifier {
           ),
         ),
       ),
-    );
-  }
-
-  Widget displayPost(Post post) {
-    return ListTile(
-      title: Text(post.caption),
-      subtitle: Text(post.userName),
     );
   }
 
@@ -110,55 +103,100 @@ class FeedHelpers with ChangeNotifier {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  child: CircleAvatar(
-                    backgroundColor: blueGreyColor,
-                    radius: 20.0,
-                    backgroundImage: NetworkImage(
-                      post.userImage,
+                Row(
+                  children: [
+                    GestureDetector(
+                      child: CircleAvatar(
+                        backgroundColor: blueGreyColor,
+                        radius: 20.0,
+                        backgroundImage: NetworkImage(
+                          post.userImage,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(left: 8),
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        child: Text(
-                          post.caption,
-                          style: TextStyle(
-                            color: greenColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        child: RichText(
-                          text: TextSpan(
-                            text: post.userName,
-                            style: TextStyle(
-                              color: blueColor,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: '  12 hours ago',
-                                style: TextStyle(
-                                  color: lightColor.withOpacity(0.8),
-                                ),
+                    Container(
+                      padding: const EdgeInsets.only(left: 8),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            child: Text(
+                              post.caption,
+                              style: TextStyle(
+                                color: greenColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          SizedBox(
+                            child: RichText(
+                              text: TextSpan(
+                                text: post.userName,
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: '  12 hours ago',
+                                    style: TextStyle(
+                                      color: lightColor.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('posts')
+                                .doc(post.caption)
+                                .collection('awards')
+                                .orderBy('time', descending: true)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: snapshot.data!.docs
+                                      .map((DocumentSnapshot documentSnapshot) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(right: 4),
+                                      height: 30,
+                                      width: 30,
+                                      child: Image.network(
+                                          documentSnapshot['award']),
+                                    );
+                                  }).toList(),
+                                );
+                              }
+                            }),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -186,7 +224,7 @@ class FeedHelpers with ChangeNotifier {
                           onLongPress: () {
                             Provider.of<PostFunctionality>(context,
                                     listen: false)
-                                .showLikes(context,post.caption);
+                                .showLikes(context, post.caption);
                           },
                           onTap: () {
                             Provider.of<PostFunctionality>(context,
@@ -217,8 +255,12 @@ class FeedHelpers with ChangeNotifier {
                           builder: ((context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
+                              return const SizedBox(
+                                width: 10,
+                                height: 10,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               );
                             } else {
                               print(
@@ -257,13 +299,33 @@ class FeedHelpers with ChangeNotifier {
                         const SizedBox(
                           width: 8,
                         ),
-                        Text(
-                          '0',
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                          ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .doc(post.caption)
+                              .collection('comments')
+                              .snapshots(),
+                          builder: ((context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const SizedBox(
+                                width: 10,
+                                height: 10,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              );
+                            } else {
+                              return Text(
+                                snapshot.data!.docs.length.toString(),
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                ),
+                              );
+                            }
+                          }),
                         ),
                       ],
                     ),
@@ -274,6 +336,11 @@ class FeedHelpers with ChangeNotifier {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         GestureDetector(
+                          onTap: () {
+                            Provider.of<PostFunctionality>(context,
+                                    listen: false)
+                                .showRewards(context, post.caption);
+                          },
                           child: Icon(
                             FontAwesomeIcons.award,
                             color: yellowColor,
@@ -283,13 +350,33 @@ class FeedHelpers with ChangeNotifier {
                         const SizedBox(
                           width: 8,
                         ),
-                        Text(
-                          '0',
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                          ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .doc(post.caption)
+                              .collection('awards')
+                              .snapshots(),
+                          builder: ((context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const SizedBox(
+                                width: 10,
+                                height: 10,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              );
+                            } else {
+                              return Text(
+                                snapshot.data!.docs.length.toString(),
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                ),
+                              );
+                            }
+                          }),
                         ),
                       ],
                     ),

@@ -139,6 +139,7 @@ class LandingServices with ChangeNotifier {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   child: TextField(
+                    keyboardType: TextInputType.emailAddress,
                     controller: emailLoginController,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
