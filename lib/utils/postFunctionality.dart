@@ -5,9 +5,19 @@ import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostFunctionality with ChangeNotifier {
   TextEditingController commentController = TextEditingController();
+  TextEditingController editCaptionController = TextEditingController();
+
+  String showTimeAgo(dynamic timeData) {
+    Timestamp time = timeData;
+    DateTime dateTime = time.toDate();
+    String timeImagePosted = timeago.format(dateTime);
+
+    return timeImagePosted;
+  }
 
   Future addLike(BuildContext context, String postId, String subDocId) async {
     return FirebaseFirestore.instance
@@ -505,6 +515,199 @@ class PostFunctionality with ChangeNotifier {
                       }),
                 ),
               ],
+            ),
+          );
+        });
+  }
+
+  showPostOption(BuildContext context, String postId) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.1,
+            decoration: BoxDecoration(
+                color: blueGreyColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15.0),
+                  topRight: Radius.circular(15.0),
+                )),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Divider(
+                    thickness: 3,
+                    color: whiteColor,
+                  ),
+                ),
+                SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      MaterialButton(
+                        color: blueColor,
+                        child: Text(
+                          'Edit Caption',
+                          style: TextStyle(
+                            color: whiteColor.withOpacity(0.9),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        onPressed: () {
+                          showEditCaption(context, postId);
+                        },
+                      ),
+                      MaterialButton(
+                        color: redColor,
+                        child: Text(
+                          'Delete Post',
+                          style: TextStyle(
+                            color: whiteColor.withOpacity(0.9),
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: darkColor,
+                                  title: Text(
+                                    'Delete this Post? ',
+                                    style: TextStyle(
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                  actions: [
+                                    MaterialButton(
+                                      child: Text(
+                                        'No',
+                                        style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: whiteColor,
+                                          color: whiteColor,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    MaterialButton(
+                                      color: redColor,
+                                      child: Text(
+                                        'Yes',
+                                        style: TextStyle(
+                                          color: whiteColor,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Provider.of<FirebaseOperation>(context,
+                                                listen: false)
+                                            .deleteUserData(postId, 'posts')
+                                            .whenComplete(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        },
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  showEditCaption(BuildContext context, String postId) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.2,
+              decoration: BoxDecoration(
+                color: blueGreyColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15.0),
+                  topRight: Radius.circular(15.0),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 100),
+                    child: Divider(
+                      thickness: 3,
+                      color: whiteColor,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        child: TextField(
+                          controller: editCaptionController,
+                          decoration: InputDecoration(
+                            hintText: 'Add new caption',
+                            hintStyle: TextStyle(
+                              color: whiteColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ),
+                      FloatingActionButton(
+                        backgroundColor: redColor,
+                        child: Icon(
+                          FontAwesomeIcons.penToSquare,
+                          color: whiteColor,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          Provider.of<FirebaseOperation>(context, listen: false)
+                              .updateCaptionPost(postId, {
+                            'caption': editCaptionController.text,
+                          }).whenComplete(() {
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         });

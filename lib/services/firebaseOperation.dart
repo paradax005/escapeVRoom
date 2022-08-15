@@ -48,15 +48,18 @@ class FirebaseOperation with ChangeNotifier {
         .doc(Provider.of<Authentication>(context, listen: false).getUserId)
         .get()
         .then((doc) {
-      print('Fetching user data');
       initUserName = doc.data()!['username'];
       initUserEmail = doc.data()!['useremail'];
       initUserImage = doc.data()!['userimage'];
-      print(initUserName);
-      print(initUserEmail);
-      print(initUserImage);
+      // print(initUserName);
+      // print(initUserEmail);
+      // print(initUserImage);
       notifyListeners();
     });
+  }
+
+  Future deleteUserData(String uID, dynamic collection) async {
+    FirebaseFirestore.instance.collection(collection).doc(uID).delete();
   }
 
   Future uploadPostData(String postId, dynamic data) async {
@@ -78,5 +81,12 @@ class FirebaseOperation with ChangeNotifier {
         .doc(postId)
         .collection('awards')
         .add(data);
+  }
+
+  Future updateCaptionPost(String postId, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .update(data);
   }
 }

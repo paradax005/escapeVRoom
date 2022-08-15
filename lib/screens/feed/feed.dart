@@ -11,7 +11,6 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: darkColor.withOpacity(0.6),
-        
         drawer: Drawer(),
         appBar:
             Provider.of<FeedHelpers>(context, listen: false).appBar(context),
@@ -23,7 +22,7 @@ class FeedScreen extends StatelessWidget {
               Provider.of<FeedHelpers>(context, listen: false)
                   .feedBody(context),
               const SizedBox(
-                height: 20,
+                height: 60,
               ),
             ],
           ),

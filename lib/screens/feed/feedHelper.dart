@@ -71,15 +71,15 @@ class FeedHelpers with ChangeNotifier {
                 );
               } else if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData) {
-                final posts = snapshot.data!.toList();
-                return ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: ((context, index) {
-                      return loadPost(context, posts[index]);
-                    }));
               } else {
-                return Container();
+                final posts = snapshot.data!.toList();
+
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: ((context, index) {
+                    return loadPost(context, posts[index]);
+                  }),
+                );
               }
             }),
           ),
@@ -145,7 +145,8 @@ class FeedHelpers with ChangeNotifier {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: '  12 hours ago',
+                                    text:
+                                        ' ${Provider.of<PostFunctionality>(context, listen: false).showTimeAgo(post.time)}',
                                     style: TextStyle(
                                       color: lightColor.withOpacity(0.8),
                                     ),
@@ -263,8 +264,6 @@ class FeedHelpers with ChangeNotifier {
                                 ),
                               );
                             } else {
-                              print(
-                                  'Number of likes : ${snapshot.data!.docs.length}');
                               return Text(
                                 snapshot.data!.docs.length.toString(),
                                 style: TextStyle(
@@ -388,7 +387,11 @@ class FeedHelpers with ChangeNotifier {
                       ? IconButton(
                           icon: const Icon(EvaIcons.moreVertical),
                           color: whiteColor,
-                          onPressed: () {},
+                          onPressed: () {
+                            Provider.of<PostFunctionality>(context,
+                                    listen: false)
+                                .showPostOption(context, post.caption);
+                          },
                         )
                       : const SizedBox(width: 0.0, height: 0.0)
                 ],

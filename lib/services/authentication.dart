@@ -30,6 +30,7 @@ class Authentication with ChangeNotifier {
       //print(' userid => $userUid');
       notifyListeners();
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
