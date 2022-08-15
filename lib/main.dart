@@ -1,4 +1,5 @@
 import 'package:escaperoom/constants/appcolors.dart';
+import 'package:escaperoom/screens/altProfile/altProfileHelper.dart';
 import 'package:escaperoom/screens/feed/feedHelper.dart';
 import 'package:escaperoom/screens/home/homePageHelper.dart';
 import 'package:escaperoom/screens/landing_screen/landingHelper.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         home: const SplashScreen(),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => AltProfileHelper()),
         ChangeNotifierProvider(create: (_) => PostFunctionality()),
         ChangeNotifierProvider(create: (_) => FeedHelpers()),
         ChangeNotifierProvider(create: (_) => UploadPost()),

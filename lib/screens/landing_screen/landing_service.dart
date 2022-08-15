@@ -202,18 +202,27 @@ class LandingServices with ChangeNotifier {
                         Provider.of<Authentication>(context, listen: false)
                             .logIntoAccount(emailLoginController.text,
                                 passwordLoginController.text)
-                            .whenComplete(() {
-                          emailLoginController.clear();
-                          passwordLoginController.clear();
-                          Navigator.pushReplacement(
-                            context,
-                            PageTransition(
-                              child: const HomeScreen(),
-                              type: PageTransitionType.fade,
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
-                        });
+                            .whenComplete(
+                          () {
+                            emailLoginController.clear();
+                            passwordLoginController.clear();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen()),
+                              (Route<dynamic> route) => false,
+                            );
+
+                            // Navigator.pushReplacement(
+                            //   context,
+                            //   PageTransition(
+                            //     child: const HomeScreen(),
+                            //     type: PageTransitionType.fade,
+                            //     duration: const Duration(seconds: 2),
+                            //   ),
+                            // );
+                          },
+                        );
                       } else {
                         warningText(context, "Fill all the data");
                       }

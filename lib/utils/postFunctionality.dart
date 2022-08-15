@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
+import 'package:escaperoom/screens/altProfile/altProfile.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -137,6 +139,24 @@ class PostFunctionality with ChangeNotifier {
                                           padding:
                                               const EdgeInsets.only(left: 8.0),
                                           child: GestureDetector(
+                                            onTap: () {
+                                              if (documentSnapshot['userId'] !=
+                                                  Provider.of<Authentication>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserId) {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AltProfile(
+                                                      userID: documentSnapshot[
+                                                          'userId'],
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
                                             child: CircleAvatar(
                                               backgroundColor: darkColor,
                                               radius: 15.0,
@@ -332,7 +352,7 @@ class PostFunctionality with ChangeNotifier {
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     child: StreamBuilder<QuerySnapshot>(
@@ -353,6 +373,22 @@ class PostFunctionality with ChangeNotifier {
                                   .map((DocumentSnapshot documentSnapshot) {
                                 return ListTile(
                                   leading: GestureDetector(
+                                    onTap: () {
+                                      if (documentSnapshot['userId'] !=
+                                          Provider.of<Authentication>(context,
+                                                  listen: false)
+                                              .getUserId) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => AltProfile(
+                                              userID:
+                                                  documentSnapshot['userId'],
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
                                     child: CircleAvatar(
                                       backgroundImage: NetworkImage(
                                           documentSnapshot['userimage']),
@@ -708,6 +744,119 @@ class PostFunctionality with ChangeNotifier {
                   ),
                 ],
               ),
+            ),
+          );
+        });
+  }
+
+  showAwardsPresnster(BuildContext context, String postId) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.5,
+            decoration: BoxDecoration(
+              color: blueGreyColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Divider(
+                    thickness: 3,
+                    color: whiteColor,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  width: 110,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: whiteColor,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Awards",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('posts')
+                        .doc('postId')
+                        .collection('awards')
+                        .orderBy('time')
+                        .snapshots(),
+                    builder: ((context, snapshot) {
+                      if (ConnectionState.waiting == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return ListView(
+                          scrollDirection: Axis.vertical,
+                          children: snapshot.data!.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(documentSnapshot['userimage']),
+                                radius: 15,
+                                backgroundColor: darkColor,
+                              ),
+                              title: Text(
+                                documentSnapshot['username'],
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15.0),
+                              ),
+                              trailing: Provider.of<Authentication>(context,
+                                              listen: false)
+                                          .getUserId !=
+                                      documentSnapshot['userId']
+                                  ? MaterialButton(
+                                      color: blueColor,
+                                      child: Text(
+                                        'Follow',
+                                        style: TextStyle(
+                                          color: whiteColor,
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      onPressed: () {},
+                                    )
+                                  : const SizedBox(
+                                      width: 0.0,
+                                      height: 0.0,
+                                    ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                    }),
+                  ),
+                ),
+              ],
             ),
           );
         });

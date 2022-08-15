@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/models/post.dart';
+import 'package:escaperoom/screens/altProfile/altProfile.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:escaperoom/utils/postFunctionality.dart';
@@ -109,6 +110,20 @@ class FeedHelpers with ChangeNotifier {
                 Row(
                   children: [
                     GestureDetector(
+                      onTap: () {
+                        if (post.userId !=
+                            Provider.of<Authentication>(context, listen: false)
+                                .getUserId) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AltProfile(
+                                userID: post.userId,
+                              ),
+                            ),
+                          );
+                        }
+                      },
                       child: CircleAvatar(
                         backgroundColor: blueGreyColor,
                         radius: 20.0,
@@ -335,6 +350,11 @@ class FeedHelpers with ChangeNotifier {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         GestureDetector(
+                          onLongPress: () {
+                            Provider.of<PostFunctionality>(context,
+                                    listen: false)
+                                .showAwardsPresnster(context, post.caption);
+                          },
                           onTap: () {
                             Provider.of<PostFunctionality>(context,
                                     listen: false)
