@@ -21,7 +21,7 @@ class AltProfile extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-            color: blueGreyColor.withOpacity(0.6),
+            color: blueGreyColor.withOpacity(0.8),
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(12.0),
               topRight: Radius.circular(12.0),
@@ -49,7 +49,7 @@ class AltProfile extends StatelessWidget {
                     Provider.of<AltProfileHelper>(context, listen: false)
                         .middleProfile(context, snapshot),
                     Provider.of<AltProfileHelper>(context, listen: false)
-                        .footerProfile(context),
+                        .footerProfile(context,userID),
                   ],
                 );
               }

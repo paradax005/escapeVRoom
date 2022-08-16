@@ -137,7 +137,7 @@ class UploadPost with ChangeNotifier {
                 // ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  child: Container(
+                  child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.25,
                     width: MediaQuery.of(context).size.width,
                     child: Image.file(
@@ -210,12 +210,12 @@ class UploadPost with ChangeNotifier {
                     color: whiteColor,
                   ),
                 ),
-                Container(
+                SizedBox(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
+                      SizedBox(
                         child: Column(
                           children: [
                             const IconButton(
@@ -311,9 +311,33 @@ class UploadPost with ChangeNotifier {
                           Provider.of<Authentication>(context, listen: false)
                               .getUserId,
                       'time': Timestamp.now(),
+                    }).whenComplete(() async {
+                      // Add Data Under userProfile
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(Provider.of<Authentication>(context,
+                                  listen: false)
+                              .getUserId)
+                          .collection('posts')
+                          .add({
+                        'postimage': getUploadImageUrl,
+                        'caption': captionController.text,
+                        'username': Provider.of<FirebaseOperation>(context,
+                                listen: false)
+                            .getInitUserName,
+                        'useremail': Provider.of<FirebaseOperation>(context,
+                                listen: false)
+                            .getInitUserEmail,
+                        'userimage': Provider.of<FirebaseOperation>(context,
+                                listen: false)
+                            .getInitUserImage,
+                        'userid':
+                            Provider.of<Authentication>(context, listen: false)
+                                .getUserId,
+                        'time': Timestamp.now(),
+                      });
                     }).whenComplete(() {
                       Navigator.pop(context);
-                      print('Post uploaded sucessflully ! Congratulations ;) ');
                     });
                   },
                   color: blueColor,

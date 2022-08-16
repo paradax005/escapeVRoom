@@ -351,9 +351,9 @@ class FeedHelpers with ChangeNotifier {
                       children: [
                         GestureDetector(
                           onLongPress: () {
-                            Provider.of<PostFunctionality>(context,
-                                    listen: false)
-                                .showAwardsPresnster(context, post.caption);
+                            // Provider.of<PostFunctionality>(context,
+                            //         listen: false)
+                            //     .showAwardsPresnster(context, post.caption);
                           },
                           onTap: () {
                             Provider.of<PostFunctionality>(context,
