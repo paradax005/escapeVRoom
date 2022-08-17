@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/models/post.dart';
-import 'package:escaperoom/screens/altProfile/altProfile.dart';
+import 'package:escaperoom/screens/altProfile/alt_profile.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
-import 'package:escaperoom/utils/postFunctionality.dart';
-import 'package:escaperoom/utils/uploadPost.dart';
+import 'package:escaperoom/utils/post_functionality.dart';
+import 'package:escaperoom/utils/upload_post.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
-import 'package:escaperoom/screens/altProfile/altProfileHelper.dart';
+import 'package:escaperoom/screens/altProfile/alt_profile_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

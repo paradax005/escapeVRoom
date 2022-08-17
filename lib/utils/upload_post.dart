@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
-
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
@@ -30,6 +28,7 @@ class UploadPost with ChangeNotifier {
         ? print('you should select an image to get started ! ')
         : uploadPostImage = File(uploadPostImageVal.path);
 
+    // ignore: use_build_context_synchronously
     uploadPostImage != null ? showUploadedImage(context) : null;
   }
 
@@ -234,7 +233,7 @@ class UploadPost with ChangeNotifier {
                           ],
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width * 0.8,
                         height: MediaQuery.of(context).size.height * 0.25,
                         child: Image.file(

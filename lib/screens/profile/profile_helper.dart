@@ -8,8 +8,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
-import '../../utils/postFunctionality.dart';
-import '../altProfile/altProfile.dart';
+import '../../utils/post_functionality.dart';
+import '../altProfile/alt_profile.dart';
 
 class ProfileHelper with ChangeNotifier {
   Widget headerProfile(BuildContext context,

@@ -1,4 +1,4 @@
-import 'package:escaperoom/screens/feed/feedHelper.dart';
+import 'package:escaperoom/screens/feed/feed_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,10 +11,10 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: darkColor.withOpacity(0.6),
-        drawer: Drawer(),
+        drawer: const Drawer(),
         appBar:
             Provider.of<FeedHelpers>(context, listen: false).appBar(context),
-        body: Container(
+        body: SizedBox(
             // const EdgeInsets.only(bottom: kBottomNavigationBarHeight - 10),
             child: SingleChildScrollView(
           child: Column(
