@@ -206,6 +206,9 @@ class LandingServices with ChangeNotifier {
                           () {
                             emailLoginController.clear();
                             passwordLoginController.clear();
+                            Provider.of<FirebaseOperation>(context,
+                                    listen: false)
+                                .initUserData(context);
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(

@@ -114,7 +114,9 @@ class FirebaseOperation with ChangeNotifier {
   }
 
   Future submitChatRoomData(
-      String chatRoomName, dynamic data) async {
+    String chatRoomName,
+    dynamic data,
+  ) async {
     return FirebaseFirestore.instance
         .collection('chatrooms')
         .doc(chatRoomName)

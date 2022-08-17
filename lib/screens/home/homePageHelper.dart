@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomePageHelper with ChangeNotifier {
-  
   Widget bottomNavBar(
       BuildContext context, int index, PageController controller) {
     return CustomNavigationBar(
@@ -33,13 +32,13 @@ class HomePageHelper with ChangeNotifier {
           icon: CircleAvatar(
             radius: 35,
             backgroundColor: blueGreyColor,
-            backgroundImage:
-                Provider.of<FirebaseOperation>(context, listen: false)
-                            .getInitUserImage != null
-                    ? NetworkImage(
-                        Provider.of<FirebaseOperation>(context, listen: false)
-                            .getInitUserImage!)
-                    : null,
+            backgroundImage: 
+            Provider.of<FirebaseOperation>(context, listen: false)
+                        .getInitUserImage != null
+                ? NetworkImage(
+                    Provider.of<FirebaseOperation>(context, listen: false)
+                        .getInitUserImage!)
+                : null,
           ),
         ),
       ],
