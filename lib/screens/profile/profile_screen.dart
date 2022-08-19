@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:escaperoom/screens/landing_screen/landing_screen.dart';
 import 'package:escaperoom/screens/profile/profile_helper.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -34,22 +35,23 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: blueGreyColor.withOpacity(0.4),
         title: RichText(
           text: TextSpan(
-              text: 'My',
-              style: TextStyle(
-                color: whiteColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-              ), // TextStyle
-              children: <TextSpan>[
-                TextSpan(
-                  text: 'Profile',
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ), // TextStyle
-                ) // TextSpan
-              ]), //<TextSpan>[]// TextSpan
+            text: 'My',
+            style: TextStyle(
+              color: whiteColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+            ), // TextStyle
+            children: <TextSpan>[
+              TextSpan(
+                text: 'Profile',
+                style: TextStyle(
+                  color: blueColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ), // TextStyle
+              ), // TextSpan
+            ],
+          ), //<TextSpan>[]// TextSpan
         ), // RichText
       ),
       body: SingleChildScrollView(

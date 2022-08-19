@@ -11,3 +11,4 @@ Color blueGreyColor = Colors.blueGrey.shade900;
 Color greenColor = Colors.greenAccent;
 Color yellowColor = Colors.yellow;
 Color greyColor = Colors.grey.shade600;
+Color bubbleOutColor = const Color(0xFF234099);

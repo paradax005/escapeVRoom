@@ -5,7 +5,6 @@ import 'package:escaperoom/screens/messaging/group_message_helper.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
 
@@ -22,9 +21,6 @@ class GroupMessage extends StatefulWidget {
 
 class _GroupMessageState extends State<GroupMessage> {
   final TextEditingController messageController = TextEditingController();
-  final focusNode = FocusNode();
-  bool isEmojiVisible = false;
-  bool isKeyboardVisible = false;
 
   @override
   void initState() {
@@ -73,7 +69,14 @@ class _GroupMessageState extends State<GroupMessage> {
                   height: 0.0,
                 ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<GroupMessageHelper>(context, listen: false)
+                  .leaveTheGroup(
+                context,
+                widget.chatDocuemnt['roomname'],
+                widget.chatDocuemnt,
+              );
+            },
             icon: Icon(
               EvaIcons.logOutOutline,
               color: redColor,
@@ -173,11 +176,11 @@ class _GroupMessageState extends State<GroupMessage> {
                         onPressed: () {
                           Provider.of<GroupMessageHelper>(context,
                                   listen: false)
-                              .showSticker(context);
+                              .showSticker(context, widget.chatDocuemnt.id);
                         },
                         icon: Icon(
-                          FontAwesomeIcons.stickerMule,
-                          color: whiteColor.withOpacity(0.8),
+                          Icons.emoji_emotions_sharp,
+                          color: whiteColor,
                         ),
                       ),
                     ),
@@ -186,7 +189,6 @@ class _GroupMessageState extends State<GroupMessage> {
                       child: TextField(
                         textInputAction: TextInputAction.newline,
                         keyboardType: TextInputType.multiline,
-                        focusNode: focusNode,
                         controller: messageController,
                         style: TextStyle(
                           color: whiteColor,
@@ -223,7 +225,7 @@ class _GroupMessageState extends State<GroupMessage> {
                     SizedBox(
                       width: MediaQuery.of(context).size.height * 0.06,
                       child: FloatingActionButton(
-                        backgroundColor: greenColor.withOpacity(0.8),
+                        backgroundColor: bubbleOutColor,
                         onPressed: () {
                           if (messageController.text.isNotEmpty) {
                             Provider.of<GroupMessageHelper>(context,
@@ -248,34 +250,4 @@ class _GroupMessageState extends State<GroupMessage> {
       ),
     );
   }
-
-  // Future toggleEmojiKeyboard() async {
-  //   if (isKeyboardVisible) {
-  //     FocusScope.of(context).unfocus();
-  //   }
-
-  //   setState(() {
-  //     isEmojiVisible = !isEmojiVisible;
-  //   });
-  // }
-
-  // Future<bool> onBackPress() {
-  //   if (isEmojiVisible) {
-  //     toggleEmojiKeyboard();
-  //   } else {
-  //     Navigator.pop(context);
-  //   }
-
-  //   return Future.value(false);
-  // }
-
-  // void onClickedEmoji() async {
-  //   if (isEmojiVisible) {
-  //     focusNode.requestFocus();
-  //   } else if (isKeyboardVisible) {
-  //     await SystemChannels.textInput.invokeMethod('TextInput.hide');
-  //     await Future.delayed(const Duration(milliseconds: 100));
-  //   }
-  //   toggleEmojiKeyboard();
-  // }
 }

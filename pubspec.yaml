@@ -30,7 +30,6 @@ dependencies:
   cloud_firestore: ^3.4.3
   cupertino_icons: ^1.0.2
   custom_navigation_bar: ^0.8.2
-  emoji_picker: ^0.1.0
   eva_icons_flutter: ^3.1.0
   firebase_auth: ^3.6.2
   firebase_core: ^1.20.0
@@ -46,6 +45,7 @@ dependencies:
   page_transition: ^2.0.9
   provider: ^6.0.3
   timeago: ^3.3.0
+  grouped_list: ^5.1.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0

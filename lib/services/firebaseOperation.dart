@@ -1,5 +1,8 @@
 // ignore_for_file: file_names
 
+import 'dart:ffi';
+
+import 'package:escaperoom/models/message.dart';
 import 'package:escaperoom/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -74,6 +77,7 @@ class FirebaseOperation with ChangeNotifier {
         .map((snapshot) =>
             snapshot.docs.map((doc) => Post.fromJson(doc.data())).toList());
   }
+
 
   Future addAward(String postId, dynamic data) async {
     return FirebaseFirestore.instance

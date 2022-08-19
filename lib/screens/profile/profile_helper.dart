@@ -5,7 +5,6 @@ import 'package:escaperoom/services/authentication.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/post_functionality.dart';
@@ -404,15 +403,13 @@ class ProfileHelper with ChangeNotifier {
         MaterialButton(
           color: redColor,
           onPressed: () {
-            // Provider.of<Authentication>(context, listen: false)
-            //     .logOutWithEmail()
-            //     .whenComplete(() {
-            Navigator.pushReplacement(
+            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
               context,
-              PageTransition(
-                child: const LandingScreen(),
-                type: PageTransitionType.bottomToTop,
+              MaterialPageRoute(
+                builder: (context) => const LandingScreen(),
               ),
+              (Route<dynamic> route) => false,
             );
             // });
           },

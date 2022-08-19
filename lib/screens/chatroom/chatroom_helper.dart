@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/appcolors.dart';
 import '../altProfile/alt_profile.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ChatRoomHelper with ChangeNotifier {
   TextEditingController chatRoomController = TextEditingController();
@@ -18,6 +19,9 @@ class ChatRoomHelper with ChangeNotifier {
 
   String get getChatRoomAvatarUrl => chatRoomAvatarUrl;
   String get getChatRoomId => chatRoomId;
+
+  String latestMessageTime = '';
+  String get getLatestMessageTime => latestMessageTime;
 
   AppBar appBar(BuildContext context) {
     return AppBar(
@@ -261,16 +265,53 @@ class ChatRoomHelper with ChangeNotifier {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  subtitle: Text(
-                    'last message',
-                    style: TextStyle(
-                      color: blueColor,
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  subtitle: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('chatrooms')
+                        .doc(documentSnapshot.id)
+                        .collection('messages')
+                        .orderBy('time', descending: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return AnimatedDefaultTextStyle(
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          duration: const Duration(seconds: 1),
+                          child: const Text('...'),
+                        );
+                      } else if ((snapshot.data!.docs.first['username'] !=
+                              null) &
+                          (snapshot.data!.docs.first['message'] != '')) {
+                        return Text(
+                          '${snapshot.data!.docs.first['username']} : ${snapshot.data!.docs.first['message']}',
+                          style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      } else if ((snapshot.data!.docs.first['username'] !=
+                              null) &
+                          (snapshot.data!.docs.first['sticker'] != '')) {
+                        return Text(
+                          '${snapshot.data!.docs.first['username']} : Sticker',
+                          style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      } else {
+                        return const SizedBox(width: 0.0, height: 0.0);
+                      }
+                    },
                   ),
                   trailing: Text(
-                    '2 hours ago',
+                    '12 hours ago',
                     style: TextStyle(
                       color: whiteColor,
                       fontSize: 10.0,
@@ -442,5 +483,12 @@ class ChatRoomHelper with ChangeNotifier {
             ),
           );
         });
+  }
+
+  showLastMessageTime(dynamic timeData) {
+    Timestamp t = timeData;
+    DateTime dateTime = t.toDate();
+    latestMessageTime = timeago.format(dateTime);
+    notifyListeners();
   }
 }
