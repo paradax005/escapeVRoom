@@ -1,4 +1,4 @@
-// ignore_for_file: slash_for_doc_comments
+// ignore_for_file: slash_for_doc_comments, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
@@ -7,8 +7,8 @@ import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import '../../components/in_bubble.dart';
-import '../../components/out_bubble.dart';
+import '../../../components/in_bubble.dart';
+import '../../../components/out_bubble.dart';
 
 class GroupMessageHelper with ChangeNotifier {
   /**
@@ -237,10 +237,8 @@ class GroupMessageHelper with ChangeNotifier {
         .get()
         .then((member) {
       hasMemberJoined = false;
-      print('initial state => $hasMemberJoined');
       if (member['joined'] != null) {
         hasMemberJoined = member['joined'];
-        print('final state => $hasMemberJoined');
         notifyListeners();
       }
       if (Provider.of<Authentication>(context, listen: false).getUserId ==
@@ -419,7 +417,6 @@ class GroupMessageHelper with ChangeNotifier {
               .getInitUserImage,
         },
       ).whenComplete(() {
-        print('Stickers send successfully to firestore ! ');
         Navigator.pop(context);
       });
     } catch (e) {

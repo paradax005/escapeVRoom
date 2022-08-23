@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, avoid_print
 import 'package:escaperoom/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,14 +25,17 @@ class FirebaseOperation with ChangeNotifier {
     imageUploadTask = imageReference.putFile(
         Provider.of<LandingUtils>(context, listen: false).getUserAvatar);
 
-    await imageUploadTask;
+    await imageUploadTask.whenComplete(() {
+      print('Image uploaded sucesfully ! ');
+    });
 
     imageReference.getDownloadURL().then((url) {
       Provider.of<LandingUtils>(context, listen: false).userAvatarUrl =
           url.toString();
 
-      // print(
-      //     'useravatar url => ${Provider.of<LandingUtils>(context, listen: false).userAvatarUrl}');
+      print('image url => $url');
+      print(
+          'useravatar url => ${Provider.of<LandingUtils>(context, listen: false).getUserAvatarUrl}');
       notifyListeners();
     });
   }
@@ -124,12 +127,8 @@ class FirebaseOperation with ChangeNotifier {
             .doc(followingId)
             .get();
     if (documentSnapshot.exists) {
-      // print('document exist  ! ');
-      // documentExist = true;
       return Future<bool>.value(true);
     } else {
-      // print('Document does not exist ! ');
-      // documentExist = false;
       return Future<bool>.value(false);
     }
   }
@@ -142,5 +141,12 @@ class FirebaseOperation with ChangeNotifier {
         .collection('chatrooms')
         .doc(chatRoomName)
         .set(data);
+  }
+
+  Future deleteChatRoom(String chatId) async {
+    return FirebaseFirestore.instance
+        .collection('chatrooms')
+        .doc(chatId)
+        .delete();
   }
 }

@@ -3,7 +3,6 @@ import 'package:escaperoom/constants/appcolors.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_triangle.dart';
-import 'dart:math' as math;
 
 class OutBubble extends StatefulWidget {
   final DocumentSnapshot messageDocument;
@@ -23,7 +22,6 @@ class _OutBubbleState extends State<OutBubble> {
         return StickerMessageOut(messageDocument: widget.messageDocument);
       }
     } catch (e) {
-      print('error description : $e');
       return Container();
     }
   }
@@ -98,7 +96,7 @@ class StickerMessageOut extends StatelessWidget {
                   bottomRight: Radius.circular(19),
                 ),
               ),
-              child: Container(
+              child: SizedBox(
                 width: 100,
                 height: 100,
                 child: Image.network(

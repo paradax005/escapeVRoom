@@ -35,7 +35,7 @@ class _SearchUserState extends State<SearchUser> {
               TextSpan(
                 text: 'Friends',
                 style: TextStyle(
-                  color: blueColor,
+                  color: lightBlueColor,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -105,7 +105,7 @@ class _SearchUserState extends State<SearchUser> {
                   margin: const EdgeInsets.only(top: 12),
                   padding: const EdgeInsets.only(top: 20),
                   decoration: BoxDecoration(
-                    color: whiteColor.withOpacity(0.9),
+                    color: blueGreyColor,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24.0),
                       topRight: Radius.circular(24.0),
@@ -144,13 +144,13 @@ class _SearchUserState extends State<SearchUser> {
                                 });
                                 return Container(
                                   margin: const EdgeInsets.only(
-                                    left: 8,
-                                    right: 8,
-                                    bottom: 4,
+                                    left: 12,
+                                    right: 12,
+                                    bottom: 6,
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    color: darkColor.withOpacity(0.8),
+                                    color: whiteColor.withOpacity(0.9),
                                   ),
                                   child: ListTile(
                                     leading: GestureDetector(
@@ -173,16 +173,16 @@ class _SearchUserState extends State<SearchUser> {
                                     ),
                                     title: Text(
                                       documentSnapshot['username'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
-                                        color: whiteColor,
+                                        color: Colors.black87,
                                       ),
                                     ),
                                     subtitle: Text(
                                       documentSnapshot['useremail'],
-                                      style: TextStyle(
-                                        color: whiteColor,
+                                      style: const TextStyle(
+                                        color: Colors.black,
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.w400,
                                       ),

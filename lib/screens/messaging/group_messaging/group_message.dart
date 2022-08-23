@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
-import 'package:escaperoom/screens/messaging/group_message_helper.dart';
+import 'package:escaperoom/screens/messaging/group_messaging/group_message_helper.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';

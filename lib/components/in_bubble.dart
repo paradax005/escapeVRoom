@@ -142,7 +142,7 @@ class StickerMessageIn extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: 100,
                       height: 100,
                       child: Image.network(

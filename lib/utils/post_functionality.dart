@@ -280,7 +280,6 @@ class PostFunctionality with ChangeNotifier {
                       ),
                       FloatingActionButton(
                         onPressed: () {
-                          print('Adding Comment ! ');
                           addComment(context, docId,
                                   commentController.text.toString().trim())
                               .whenComplete(() {

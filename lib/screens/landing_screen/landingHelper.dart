@@ -77,7 +77,9 @@ class LandingHelpers with ChangeNotifier {
         children: [
           GestureDetector(
             onTap: () {
-              customButtomSheet(context);
+              // customButtomSheet(context);
+              Provider.of<LandingServices>(context, listen: false)
+                  .loginSheet(context);
             },
             child: Container(
               width: 80,

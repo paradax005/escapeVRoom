@@ -21,11 +21,14 @@ class LandingUtils with ChangeNotifier {
     pickedUserAvatar == null
         ? print('you should select an image to get started ! ')
         : userAvatar = File(pickedUserAvatar.path);
+    print(userAvatar!.path);
 
     userAvatar != null
         ? Provider.of<FirebaseOperation>(context, listen: false)
             .uploadUserAvatar(context)
         : null;
+
+    print('userAvatar => $userAvatar');
   }
 
   Future selectAvatarOptionSheet(BuildContext context) async {
@@ -52,6 +55,17 @@ class LandingUtils with ChangeNotifier {
                     color: whiteColor,
                   ),
                 ),
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  child: Text(
+                    'Choose your avatar !',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: whiteColor.withOpacity(0.8),
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -60,14 +74,14 @@ class LandingUtils with ChangeNotifier {
                       child: Text(
                         'Gallery',
                         style: TextStyle(
-                            color: whiteColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                          color: whiteColor,
+                          fontSize: 14,
+                        ),
                       ),
                       onPressed: () {
                         pickUserAvatar(context, ImageSource.gallery)
                             .whenComplete(() {
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
                           Provider.of<LandingServices>(context, listen: false)
                               .showUserAvatar(context);
                         });
@@ -78,9 +92,9 @@ class LandingUtils with ChangeNotifier {
                       child: Text(
                         'Camera',
                         style: TextStyle(
-                            color: whiteColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                          color: whiteColor,
+                          fontSize: 14,
+                        ),
                       ),
                       onPressed: () {
                         pickUserAvatar(context, ImageSource.camera)

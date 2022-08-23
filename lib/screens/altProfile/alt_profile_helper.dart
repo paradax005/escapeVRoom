@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
+import 'package:escaperoom/screens/messaging/direct_messaging/chat_message.dart';
 import 'package:escaperoom/screens/profile/profile_helper.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
@@ -314,7 +315,22 @@ class AltProfileHelper with ChangeNotifier {
                   ),
                 ),
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userUID)
+                        .get()
+                        .then((DocumentSnapshot document) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatMessage(
+                            userDocument: document,
+                          ),
+                        ),
+                      );
+                    });
+                  },
                   color: blueColor,
                   child: Text(
                     'Message',

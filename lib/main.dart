@@ -6,7 +6,8 @@ import 'package:escaperoom/screens/home/homePageHelper.dart';
 import 'package:escaperoom/screens/landing_screen/landingHelper.dart';
 import 'package:escaperoom/screens/landing_screen/landing_service.dart';
 import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
-import 'package:escaperoom/screens/messaging/group_message_helper.dart';
+import 'package:escaperoom/screens/messaging/direct_messaging/chat_message_helper.dart';
+import 'package:escaperoom/screens/messaging/group_messaging/group_message_helper.dart';
 import 'package:escaperoom/screens/profile/profile_helper.dart';
 import 'package:escaperoom/screens/splash_screen/splash_screen.dart';
 import 'package:escaperoom/services/authentication.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         home: const SplashScreen(),
       ),
       providers: [
+        ChangeNotifierProvider(create: (_) => ChatMessageHelper()),
         ChangeNotifierProvider(create: (_) => GroupMessageHelper()),
         ChangeNotifierProvider(create: (_) => ChatRoomHelper()),
         ChangeNotifierProvider(create: (_) => AltProfileHelper()),

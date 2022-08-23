@@ -1,4 +1,4 @@
-// ignore_for_file: slash_for_doc_comments
+// ignore_for_file: slash_for_doc_comments, avoid_print
 import 'package:escaperoom/constants/appcolors.dart';
 import 'package:escaperoom/screens/home/home.dart';
 import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
@@ -59,7 +59,7 @@ class LandingServices with ChangeNotifier {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -84,7 +84,7 @@ class LandingServices with ChangeNotifier {
                           Provider.of<FirebaseOperation>(context, listen: false)
                               .uploadUserAvatar(context)
                               .whenComplete(() {
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
                             signInSheet(context);
                           });
                         },
@@ -135,6 +135,17 @@ class LandingServices with ChangeNotifier {
                     color: whiteColor,
                   ),
                 ),
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  child: Text(
+                    'Welcome Back ! ',
+                    style: TextStyle(
+                      color: lightBlueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -146,9 +157,17 @@ class LandingServices with ChangeNotifier {
                         vertical: 2,
                         horizontal: 10,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Colors.grey),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        borderSide: BorderSide(
+                          color: whiteColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        borderSide: BorderSide(
+                          color: whiteColor,
+                        ),
                       ),
                       hintText: "enter your email",
                       hintStyle: TextStyle(
@@ -175,9 +194,17 @@ class LandingServices with ChangeNotifier {
                         vertical: 2,
                         horizontal: 10,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Colors.grey),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        borderSide: BorderSide(
+                          color: whiteColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        borderSide: BorderSide(
+                          color: whiteColor,
+                        ),
                       ),
                       hintText: "enter your Password",
                       hintStyle: TextStyle(
@@ -192,6 +219,37 @@ class LandingServices with ChangeNotifier {
                       fontSize: 16,
                     ),
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Don\'t have an account ? ',
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              Provider.of<LandingUtils>(context, listen: false)
+                                  .selectAvatarOptionSheet(context);
+                            },
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                color: redColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 12),
@@ -290,9 +348,17 @@ class LandingServices with ChangeNotifier {
                       vertical: 2,
                       horizontal: 10,
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Colors.grey),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: whiteColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: whiteColor,
+                      ),
                     ),
                     hintText: "enter your username",
                     hintStyle: TextStyle(
@@ -319,8 +385,16 @@ class LandingServices with ChangeNotifier {
                       horizontal: 10,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: whiteColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: whiteColor,
+                      ),
                     ),
                     hintText: "enter your email",
                     hintStyle: TextStyle(
@@ -348,8 +422,16 @@ class LandingServices with ChangeNotifier {
                       horizontal: 10,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: whiteColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: whiteColor,
+                      ),
                     ),
                     hintText: "enter your password",
                     hintStyle: TextStyle(
@@ -375,7 +457,6 @@ class LandingServices with ChangeNotifier {
                           .createAccount(
                               emailController.text, passwordController.text)
                           .whenComplete(() {
-                        print('waiting to add a new document ! ');
                         try {
                           Provider.of<FirebaseOperation>(context, listen: false)
                               .createUserCollection(context, {
@@ -389,7 +470,6 @@ class LandingServices with ChangeNotifier {
                                     listen: false)
                                 .getUserAvatarUrl
                           }).whenComplete(() {
-                            print('Document created sucessfully ! ');
                             Navigator.pushReplacement(
                               context,
                               PageTransition(
@@ -400,7 +480,7 @@ class LandingServices with ChangeNotifier {
                             );
                           });
                         } catch (e) {
-                          print('an error was occured ${e.toString()}');
+                          print('an error was occured ! $e');
                         }
                       });
                     } else {

@@ -19,19 +19,14 @@ class Authentication with ChangeNotifier {
   }
 
   Future createAccount(String email, String password) async {
-    try {
-      UserCredential userCredential = await firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+    UserCredential userCredential = await firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password);
 
-      User? user = userCredential.user;
-      userUid = user!.uid;
-      // ignore: avoid_print
-      //print(' userid => $userUid');
-      notifyListeners();
-    } catch (e) {
-      // ignore: avoid_print
-      print(e);
-    }
+    User? user = userCredential.user;
+    userUid = user!.uid;
+    // ignore: avoid_print
+    //print(' userid => $userUid');
+    notifyListeners();
   }
 
   Future signInWithGoogle() async {

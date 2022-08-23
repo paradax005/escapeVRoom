@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:escaperoom/screens/messaging/group_message.dart';
+import 'package:escaperoom/screens/messaging/group_messaging/group_message.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -124,7 +124,6 @@ class ChatRoomHelper with ChangeNotifier {
                                 onTap: () {
                                   chatRoomAvatarUrl = documentSnapshot['uri'];
                                   notifyListeners();
-                                  print(chatRoomAvatarUrl);
                                 },
                                 child: Container(
                                   margin:
@@ -273,42 +272,54 @@ class ChatRoomHelper with ChangeNotifier {
                         .orderBy('time', descending: true)
                         .snapshots(),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return AnimatedDefaultTextStyle(
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.w600,
+                      try {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return AnimatedDefaultTextStyle(
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            duration: const Duration(milliseconds: 300),
+                            child: const Text('...'),
+                          );
+                        } else if (!snapshot.hasData) {
+                          return const SizedBox(width: 0.0, height: 0.0);
+                        } else if ((snapshot.data!.docs.first['username'] !=
+                                null) &
+                            (snapshot.data!.docs.first['message'] != '')) {
+                          return Text(
+                            '${snapshot.data!.docs.first['username']} : ${snapshot.data!.docs.first['message']}',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        } else if ((snapshot.data!.docs.first['username'] !=
+                                null) &
+                            (snapshot.data!.docs.first['sticker'] != '')) {
+                          return Text(
+                            '${snapshot.data!.docs.first['username']} : Sticker',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        } else {
+                          return const SizedBox(width: 0.0, height: 0.0);
+                        }
+                      } catch (e) {
+                        return SizedBox(
+                          child: Text(
+                            'No Message yet !',
+                            style: TextStyle(
+                              color: blueColor,
+                            ),
                           ),
-                          duration: const Duration(seconds: 1),
-                          child: const Text('...'),
                         );
-                      } else if (!snapshot.hasData) {
-                        return const SizedBox(width: 0.0, height: 0.0);
-                      } else if ((snapshot.data!.docs.first['username'] !=
-                              null) &
-                          (snapshot.data!.docs.first['message'] != '')) {
-                        return Text(
-                          '${snapshot.data!.docs.first['username']} : ${snapshot.data!.docs.first['message']}',
-                          style: TextStyle(
-                            color: blueColor,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        );
-                      } else if ((snapshot.data!.docs.first['username'] !=
-                              null) &
-                          (snapshot.data!.docs.first['sticker'] != '')) {
-                        return Text(
-                          '${snapshot.data!.docs.first['username']} : Sticker',
-                          style: TextStyle(
-                            color: blueColor,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        );
-                      } else {
-                        return const SizedBox(width: 0.0, height: 0.0);
                       }
                     },
                   ),
@@ -328,13 +339,17 @@ class ChatRoomHelper with ChangeNotifier {
     );
   }
 
-  showChatRoomDetails(BuildContext context, DocumentSnapshot documentSnapshot) {
+  showChatRoomDetails(BuildContext context, DocumentSnapshot chatDocument) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
           return Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.4,
+            height:
+                Provider.of<Authentication>(context, listen: false).getUserId ==
+                        chatDocument['useruid']
+                    ? MediaQuery.of(context).size.height * 0.45
+                    : MediaQuery.of(context).size.height * 0.4,
             decoration: BoxDecoration(
               color: blueGreyColor,
               borderRadius: const BorderRadius.only(
@@ -378,7 +393,7 @@ class ChatRoomHelper with ChangeNotifier {
                   child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('chatrooms')
-                        .doc(documentSnapshot.id)
+                        .doc(chatDocument.id)
                         .collection('members')
                         .snapshots(),
                     builder: (context, snapshot) {
@@ -465,19 +480,42 @@ class ChatRoomHelper with ChangeNotifier {
                       CircleAvatar(
                         backgroundColor: Colors.transparent,
                         backgroundImage:
-                            NetworkImage(documentSnapshot['userimage']),
+                            NetworkImage(chatDocument['userimage']),
                       ),
                       const SizedBox(
                         width: 8,
                       ),
                       Text(
-                        documentSnapshot['username'],
+                        chatDocument['username'],
                         style: TextStyle(
                           color: whiteColor,
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Provider.of<Authentication>(context, listen: false)
+                                  .getUserId ==
+                              chatDocument['useruid']
+                          ? MaterialButton(
+                              color: redColor,
+                              child: Text(
+                                'Delete ChatRoom',
+                                style: TextStyle(
+                                  color: whiteColor,
+                                ),
+                              ),
+                              onPressed: () {
+                                showAlertDialogDeleteChatroom(
+                                    context, chatDocument);
+                              },
+                            )
+                          : const SizedBox(
+                              width: 0,
+                              height: 0,
+                            )
                     ],
                   ),
                 )
@@ -492,5 +530,58 @@ class ChatRoomHelper with ChangeNotifier {
     DateTime dateTime = t.toDate();
     latestMessageTime = timeago.format(dateTime);
     notifyListeners();
+  }
+
+  showAlertDialogDeleteChatroom(
+      BuildContext context, DocumentSnapshot documentSnapshot) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: darkColor,
+            title: Text(
+              'Delete ${documentSnapshot['roomname']}? ',
+              style: TextStyle(
+                color: whiteColor,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            actions: [
+              MaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'No',
+                  style: TextStyle(
+                    color: whiteColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    decorationColor: whiteColor,
+                  ),
+                ),
+              ),
+              MaterialButton(
+                color: redColor,
+                onPressed: () {
+                  Provider.of<FirebaseOperation>(context, listen: false)
+                      .deleteChatRoom(documentSnapshot.id);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Yes',
+                  style: TextStyle(
+                    color: whiteColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }
