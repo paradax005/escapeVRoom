@@ -283,6 +283,8 @@ class ChatRoomHelper with ChangeNotifier {
                           duration: const Duration(seconds: 1),
                           child: const Text('...'),
                         );
+                      } else if (!snapshot.hasData) {
+                        return const SizedBox(width: 0.0, height: 0.0);
                       } else if ((snapshot.data!.docs.first['username'] !=
                               null) &
                           (snapshot.data!.docs.first['message'] != '')) {

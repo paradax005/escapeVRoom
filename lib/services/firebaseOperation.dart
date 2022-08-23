@@ -1,8 +1,4 @@
 // ignore_for_file: file_names
-
-import 'dart:ffi';
-
-import 'package:escaperoom/models/message.dart';
 import 'package:escaperoom/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +13,9 @@ class FirebaseOperation with ChangeNotifier {
   String? get getInitUserName => initUserName;
   String? get getInitUserEmail => initUserEmail;
   String? get getInitUserImage => initUserImage;
+
+  bool? documentExist;
+  bool? get getDocumentExist => documentExist;
 
   Future uploadUserAvatar(BuildContext context) async {
     UploadTask imageUploadTask;
@@ -78,7 +77,6 @@ class FirebaseOperation with ChangeNotifier {
             snapshot.docs.map((doc) => Post.fromJson(doc.data())).toList());
   }
 
-
   Future addAward(String postId, dynamic data) async {
     return FirebaseFirestore.instance
         .collection('posts')
@@ -115,6 +113,25 @@ class FirebaseOperation with ChangeNotifier {
           .doc(followerDocid)
           .set(followerData);
     });
+  }
+
+  Future<bool> isUserFollowing(String userId, String followingId) async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('following')
+            .doc(followingId)
+            .get();
+    if (documentSnapshot.exists) {
+      // print('document exist  ! ');
+      // documentExist = true;
+      return Future<bool>.value(true);
+    } else {
+      // print('Document does not exist ! ');
+      // documentExist = false;
+      return Future<bool>.value(false);
+    }
   }
 
   Future submitChatRoomData(

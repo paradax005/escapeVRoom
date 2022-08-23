@@ -28,17 +28,19 @@ class HomePageHelper with ChangeNotifier {
       items: [
         CustomNavigationBarItem(icon: const Icon(EvaIcons.home)),
         CustomNavigationBarItem(icon: const Icon(Icons.message_rounded)),
+        CustomNavigationBarItem(icon: const Icon(Icons.search)),
         CustomNavigationBarItem(
           icon: CircleAvatar(
             radius: 35,
             backgroundColor: blueGreyColor,
-            backgroundImage: 
-            Provider.of<FirebaseOperation>(context, listen: false)
-                        .getInitUserImage != null
-                ? NetworkImage(
-                    Provider.of<FirebaseOperation>(context, listen: false)
-                        .getInitUserImage!)
-                : null,
+            backgroundImage:
+                Provider.of<FirebaseOperation>(context, listen: false)
+                            .getInitUserImage !=
+                        null
+                    ? NetworkImage(
+                        Provider.of<FirebaseOperation>(context, listen: false)
+                            .getInitUserImage!)
+                    : null,
           ),
         ),
       ],

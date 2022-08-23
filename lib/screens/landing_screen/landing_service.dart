@@ -212,7 +212,8 @@ class LandingServices with ChangeNotifier {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()),
+                                builder: (context) => const HomeScreen(),
+                              ),
                               (Route<dynamic> route) => false,
                             );
 

@@ -3,6 +3,7 @@ import 'package:escaperoom/screens/chatroom/chatroom.dart';
 import 'package:escaperoom/screens/feed/feed.dart';
 import 'package:escaperoom/screens/home/homePageHelper.dart';
 import 'package:escaperoom/screens/profile/profile_screen.dart';
+import 'package:escaperoom/screens/search/search_user.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
             pageIndex = page;
           });
         },
-        children: const [FeedScreen(), ChatRoomScreen(), ProfileScreen()],
+        children: const [FeedScreen(), ChatRoomScreen(), SearchUser(),ProfileScreen()],
       ),
       bottomNavigationBar: Provider.of<HomePageHelper>(context, listen: false)
           .bottomNavBar(context,pageIndex, homePageController),

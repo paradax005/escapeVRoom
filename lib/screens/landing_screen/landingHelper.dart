@@ -28,7 +28,7 @@ class LandingHelpers with ChangeNotifier {
 
   Widget welcomeWidget(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 20, top: 20, bottom: 60),
+      margin: const EdgeInsets.only(left: 30, top: 40, bottom: 60),
       constraints: const BoxConstraints(
         maxWidth: 220,
       ),
@@ -149,14 +149,14 @@ class LandingHelpers with ChangeNotifier {
               "By Continuining you agree escapeRoom's Terms of ",
               style: TextStyle(
                 color: Colors.grey.shade600,
-                fontSize: 12,
+                fontSize: 10,
               ),
             ),
             Text(
               "Services & Privacy Policy ",
               style: TextStyle(
                 color: Colors.grey.shade600,
-                fontSize: 12,
+                fontSize: 10,
               ),
             ),
             const SizedBox(
