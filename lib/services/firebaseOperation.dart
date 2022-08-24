@@ -133,6 +133,18 @@ class FirebaseOperation with ChangeNotifier {
     }
   }
 
+  /// Check If Document Exists
+  // Future<bool> checkIfDocExists(
+  //     String userConnected, String followingId) async {
+  //   var collectionRef = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(userConnected)
+  //       .collection('following');
+
+  //   var doc = await collectionRef.doc(followingId).get();
+  //   return doc.exists;
+  // }
+
   Future submitChatRoomData(
     String chatRoomName,
     dynamic data,

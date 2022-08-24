@@ -1,10 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication with ChangeNotifier {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<UserCredential> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final LoginResult loginResult = await FacebookAuth.instance
+        .login(permissions: ['email', 'public_profile']);
+
+    // Create a credential from the access token
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+    final userData = await FacebookAuth.instance.getUserData();
+    // ignore: avoid_print
+    print('user info $userData');
+
+    // Once signed in, return the UserCredential
+    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  }
 
   late String userUid;
   String get getUserId => userUid;
@@ -48,7 +67,14 @@ class Authentication with ChangeNotifier {
 
     userUid = user!.uid;
 
-    //print("user uid => $userUid");
+    if (userCredential.additionalUserInfo!.isNewUser) {
+      FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'userId': user.uid,
+        'username': user.displayName,
+        'userimage': user.photoURL,
+        'useremail': user.email,
+      });
+    }
 
     notifyListeners();
   }

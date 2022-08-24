@@ -5,7 +5,9 @@ import 'package:escaperoom/screens/landing_screen/landing_service.dart';
 import 'package:escaperoom/screens/landing_screen/landing_utils.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -121,6 +123,9 @@ class LandingHelpers with ChangeNotifier {
             ),
           ),
           GestureDetector(
+            onTap: () {
+              signInWithFacebook();
+            },
             child: Container(
               width: 80,
               height: 40,
@@ -239,5 +244,22 @@ class LandingHelpers with ChangeNotifier {
             ),
           );
         });
+  }
+
+  Future<UserCredential> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final LoginResult loginResult = await FacebookAuth.instance
+        .login(permissions: ['email', 'public_profile']);
+
+    // Create a credential from the access token
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+    final userData = await FacebookAuth.instance.getUserData();
+    // ignore: avoid_print
+    print('user info $userData');
+
+    // Once signed in, return the UserCredential
+    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 }

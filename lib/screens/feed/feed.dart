@@ -15,15 +15,11 @@ class FeedScreen extends StatelessWidget {
         appBar:
             Provider.of<FeedHelpers>(context, listen: false).appBar(context),
         body: SizedBox(
-            // const EdgeInsets.only(bottom: kBottomNavigationBarHeight - 10),
             child: SingleChildScrollView(
           child: Column(
             children: [
               Provider.of<FeedHelpers>(context, listen: false)
                   .feedBody(context),
-              const SizedBox(
-                height: 60,
-              ),
             ],
           ),
         )));

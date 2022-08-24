@@ -199,13 +199,32 @@ class ProfileHelper with ChangeNotifier {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          '0',
-                          style: TextStyle(
-                            color: whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28.0,
-                          ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .where('userid',
+                                  isEqualTo: Provider.of<Authentication>(
+                                          context,
+                                          listen: false)
+                                      .getUserId)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              return Text(
+                                snapshot.data!.docs.length.toString(),
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 28.0,
+                                ),
+                              );
+                            }
+                          },
                         ),
                         Text(
                           'Posts',

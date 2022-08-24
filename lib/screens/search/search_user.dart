@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
 import 'package:escaperoom/services/authentication.dart';
-import 'package:escaperoom/services/firebaseOperation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +15,8 @@ class SearchUser extends StatefulWidget {
 
 class _SearchUserState extends State<SearchUser> {
   String username = '';
-  bool? follow;
+  bool? isFollow;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,19 +129,6 @@ class _SearchUserState extends State<SearchUser> {
                                   Provider.of<Authentication>(context,
                                           listen: false)
                                       .getUserId) {
-                                Future.delayed(const Duration(milliseconds: 0),
-                                    () async {
-                                  Provider.of<FirebaseOperation>(context,
-                                          listen: false)
-                                      .isUserFollowing(
-                                          Provider.of<Authentication>(context,
-                                                  listen: false)
-                                              .getUserId,
-                                          documentSnapshot['userId'])
-                                      .then((value) {
-                                    follow = value;
-                                  });
-                                });
                                 return Container(
                                   margin: const EdgeInsets.only(
                                     left: 12,
@@ -227,7 +214,7 @@ class _SearchUserState extends State<SearchUser> {
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16.0),
-                                    color: darkColor.withOpacity(0.8),
+                                    color: whiteColor.withOpacity(0.9),
                                   ),
                                   child: ListTile(
                                     leading: GestureDetector(
@@ -250,16 +237,16 @@ class _SearchUserState extends State<SearchUser> {
                                     ),
                                     title: Text(
                                       documentSnapshot['username'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
-                                        color: whiteColor,
+                                        color: Colors.black87,
                                       ),
                                     ),
                                     subtitle: Text(
                                       documentSnapshot['useremail'],
-                                      style: TextStyle(
-                                        color: whiteColor,
+                                      style: const TextStyle(
+                                        color: Colors.black,
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -300,5 +287,30 @@ class _SearchUserState extends State<SearchUser> {
         ),
       ),
     );
+  }
+
+  checkIfDocExists(String userConnected, String followingId) async {
+    var doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userConnected)
+        .collection('following')
+        .doc(followingId)
+        .get();
+
+    return doc.exists; 
+
+    // print('output value : $output');
+
+    // var collectionRef = FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(userConnected)
+    //     .collection('following');
+
+    // var doc = await collectionRef.doc(followingId).get();
+    // if (doc.exists) {
+    //   return 'y';
+    // } else {
+    //   return 'n';
+    // }
   }
 }

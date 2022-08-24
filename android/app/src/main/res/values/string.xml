@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name = "app_name">escaperoom</string>
+    <string name="facebook_app_id">1050594998983082</string>
+    <string name="fb_login_protocol_scheme">fb1050594998983082</string>
+    <string name="facebook_client_token">83d2c8bf686a8ed16ecb2c80888270d8</string>
+</resources>

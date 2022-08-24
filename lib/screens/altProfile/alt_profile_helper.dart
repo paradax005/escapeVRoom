@@ -224,6 +224,7 @@ class AltProfileHelper with ChangeNotifier {
                         ],
                       ),
                       Container(
+                        margin: const EdgeInsets.only(top: 4),
                         height: 70,
                         width: 80,
                         decoration: BoxDecoration(
@@ -234,14 +235,40 @@ class AltProfileHelper with ChangeNotifier {
                         ),
                         child: Column(
                           children: [
-                            Text(
-                              '0',
-                              style: TextStyle(
-                                color: whiteColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 28.0,
-                              ),
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('posts')
+                                  .where(
+                                    'userid',
+                                    isEqualTo: snapshot.data!['userId'],
+                                  )
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else {
+                                  return Text(
+                                    snapshot.data!.docs.length.toString(),
+                                    style: TextStyle(
+                                      color: whiteColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 28.0,
+                                    ),
+                                  );
+                                }
+                              },
                             ),
+                            // Text(
+                            //   '0',
+                            //   style: TextStyle(
+                            //     color: whiteColor,
+                            //     fontWeight: FontWeight.bold,
+                            //     fontSize: 28.0,
+                            //   ),
+                            // ),
                             Text(
                               'Posts',
                               style: TextStyle(

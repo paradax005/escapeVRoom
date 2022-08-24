@@ -78,7 +78,8 @@ class FeedHelpers with ChangeNotifier {
                 return ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: ((context, index) {
-                    return loadPost(context, posts[index]);
+                    return loadPost(
+                        context, posts[index], (index == posts.length - 1));
                   }),
                 );
               }
@@ -89,8 +90,10 @@ class FeedHelpers with ChangeNotifier {
     );
   }
 
-  Widget loadPost(BuildContext context, Post post) {
+  Widget loadPost(BuildContext context, Post post, bool isLast) {
     return Container(
+      margin:
+          isLast ? const EdgeInsets.only(bottom: 150) : const EdgeInsets.all(2),
       padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.4,
