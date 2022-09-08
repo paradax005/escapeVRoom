@@ -38,6 +38,13 @@ class GroupMessageHelper with ChangeNotifier {
       'userimage': Provider.of<FirebaseOperation>(context, listen: false)
           .getInitUserImage,
     }).whenComplete(() {
+      FirebaseFirestore.instance
+          .collection('chatrooms')
+          .doc(documentSnapshot.id)
+          .update({
+        'lastmessage': controller.text,
+        'lastmessagetime': Timestamp.now(),
+      });
       controller.clear();
     });
   }

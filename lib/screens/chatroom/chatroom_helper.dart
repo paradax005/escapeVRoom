@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/screens/messaging/group_messaging/group_message.dart';
 import 'package:escaperoom/services/authentication.dart';
 import 'package:escaperoom/services/firebaseOperation.dart';
+import 'package:escaperoom/utils/post_functionality.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -183,6 +184,35 @@ class ChatRoomHelper with ChangeNotifier {
                               'time': Timestamp.now(),
                               'roomname': chatRoomController.text,
                               'username': Provider.of<FirebaseOperation>(
+                                context,
+                                listen: false,
+                              ).getInitUserName,
+                              'useremail': Provider.of<FirebaseOperation>(
+                                context,
+                                listen: false,
+                              ).getInitUserEmail,
+                              'userimage': Provider.of<FirebaseOperation>(
+                                context,
+                                listen: false,
+                              ).getInitUserImage,
+                              'useruid': Provider.of<Authentication>(
+                                context,
+                                listen: false,
+                              ).getUserId,
+                              'lastmessage': '',
+                              'lastmessagetime': Timestamp.now(),
+                            },
+                          ).whenComplete(() async {
+                            FirebaseFirestore.instance
+                                .collection('chatrooms')
+                                .doc(chatRoomController.text)
+                                .collection('members')
+                                .doc(Provider.of<Authentication>(context,
+                                        listen: false)
+                                    .getUserId)
+                                .set({
+                              'joined': true,
+                              'username': Provider.of<FirebaseOperation>(
                                       context,
                                       listen: false)
                                   .getInitUserName,
@@ -197,8 +227,8 @@ class ChatRoomHelper with ChangeNotifier {
                               'useruid': Provider.of<Authentication>(context,
                                       listen: false)
                                   .getUserId,
-                            },
-                          ).whenComplete(() {
+                              'time': Timestamp.now()
+                            });
                             Navigator.pop(context);
                             chatRoomController.clear();
                           });
@@ -220,7 +250,10 @@ class ChatRoomHelper with ChangeNotifier {
 
   fetchChatRooms(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('chatrooms').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('chatrooms')
+          .orderBy('lastmessagetime',descending: true)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -324,10 +357,13 @@ class ChatRoomHelper with ChangeNotifier {
                     },
                   ),
                   trailing: Text(
-                    '12 hours ago',
+                    Provider.of<PostFunctionality>(context, listen: false)
+                        .showTimeAgo(
+                      documentSnapshot['lastmessagetime'],
+                    ),
                     style: TextStyle(
                       color: whiteColor,
-                      fontSize: 10.0,
+                      fontSize: 10,
                     ),
                   ),
                 ),

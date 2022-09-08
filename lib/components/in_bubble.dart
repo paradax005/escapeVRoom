@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
+import 'package:escaperoom/utils/post_functionality.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
 import 'custom_triangle.dart';
@@ -79,6 +81,22 @@ class MessageWidgetIn extends StatelessWidget {
                       messageDocument['message'],
                       style: TextStyle(color: whiteColor, fontSize: 14),
                     ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          Provider.of<PostFunctionality>(context, listen: false)
+                              .showTimeAgo(
+                            messageDocument['time'],
+                          ),
+                          style: TextStyle(
+                            color: yellowColor,
+                            fontSize: 8,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 )),
           ),
@@ -147,6 +165,17 @@ class StickerMessageIn extends StatelessWidget {
                       height: 100,
                       child: Image.network(
                         messageDocument['sticker'],
+                      ),
+                    ),
+                    Text(
+                      Provider.of<PostFunctionality>(context, listen: false)
+                          .showTimeAgo(
+                        messageDocument['time'],
+                      ),
+                      style: TextStyle(
+                        color: yellowColor,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

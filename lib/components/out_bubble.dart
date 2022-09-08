@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:escaperoom/constants/appcolors.dart';
+import 'package:escaperoom/utils/post_functionality.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_triangle.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class OutBubble extends StatefulWidget {
   final DocumentSnapshot messageDocument;
@@ -55,9 +58,25 @@ class MessageWidgetOut extends StatelessWidget {
                   bottomRight: Radius.circular(19),
                 ),
               ),
-              child: Text(
-                messageDocument['message'],
-                style: const TextStyle(color: Colors.white, fontSize: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    messageDocument['message'],
+                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  Text(
+                    Provider.of<PostFunctionality>(context, listen: false)
+                        .showTimeAgo(
+                      messageDocument['time'],
+                    ),
+                    style: TextStyle(
+                      color: yellowColor,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -96,12 +115,28 @@ class StickerMessageOut extends StatelessWidget {
                   bottomRight: Radius.circular(19),
                 ),
               ),
-              child: SizedBox(
-                width: 100,
-                height: 100,
-                child: Image.network(
-                  messageDocument['sticker'],
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Image.network(
+                      messageDocument['sticker'],
+                    ),
+                  ),
+                  Text(
+                    Provider.of<PostFunctionality>(context, listen: false)
+                        .showTimeAgo(
+                      messageDocument['time'],
+                    ),
+                    style: TextStyle(
+                      color: yellowColor,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -109,50 +144,13 @@ class StickerMessageOut extends StatelessWidget {
         ],
       ),
     );
+  }
 
-    //  Padding(
-    //   padding: EdgeInsets.only(left: (MediaQuery.of(context).size.width / 5)),
-    //   child: Row(
-    //     mainAxisAlignment: MainAxisAlignment.end,
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       // Transform(
-    //       //   alignment: Alignment.center,
-    //       //   transform: Matrix4.rotationY(math.pi),
-    //       //   child: CustomPaint(
-    //       //     painter: Triangle(bubbleOutColor),
-    //       //   ),
-    //       // ),
-    //       Flexible(
-    //         child: Container(
-    //           padding: const EdgeInsets.all(12),
-    //           margin: const EdgeInsets.only(bottom: 5),
-    //           decoration: BoxDecoration(
-    //             color: bubbleOutColor,
-    //             borderRadius: const BorderRadius.only(
-    //               topRight: Radius.circular(19),
-    //               bottomLeft: Radius.circular(19),
-    //               bottomRight: Radius.circular(19),
-    //             ),
-    //           ),
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.start,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               Container(
-    //                 width: 100,
-    //                 height: 100,
-    //                 child: Image.network(
-    //                   messageDocument['sticker'],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //       CustomPaint(painter: Triangle(bubbleOutColor)),
-    //     ],
-    //   ),
-    // );
+  static String messageTimeAgo(dynamic timeData) {
+    Timestamp time = timeData;
+    DateTime dateTime = time.toDate();
+    String timeAgoMessageSent = timeago.format(dateTime);
+
+    return timeAgoMessageSent;
   }
 }

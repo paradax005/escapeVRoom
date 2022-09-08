@@ -246,20 +246,26 @@ class LandingHelpers with ChangeNotifier {
         });
   }
 
-  Future<UserCredential> signInWithFacebook() async {
+  signInWithFacebook() async {
     // Trigger the sign-in flow
     final LoginResult loginResult = await FacebookAuth.instance
         .login(permissions: ['email', 'public_profile']);
 
-    // Create a credential from the access token
-    final OAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+    final AccessToken? accessToken = await FacebookAuth.i.accessToken;
+    if (accessToken != null) {
+      //user log in !
 
-    final userData = await FacebookAuth.instance.getUserData();
-    // ignore: avoid_print
-    print('user info $userData');
+      // Create a credential from the access token
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(accessToken.token);
 
-    // Once signed in, return the UserCredential
-    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      final userData = await FacebookAuth.instance.getUserData();
+      FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      // ignore: avoid_print
+      print('user info $userData');
+    } else {
+      // ignore: avoid_print
+      print('error while connecting with facebook !! ');
+    }
   }
 }

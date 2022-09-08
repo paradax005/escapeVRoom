@@ -12,6 +12,9 @@ import 'package:provider/provider.dart';
 import 'alt_profile.dart';
 
 class AltProfileHelper with ChangeNotifier {
+  bool isFollow = false;
+
+  set setIsFollowValue(bool value) => isFollow = value;
   AppBar appBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
@@ -261,14 +264,6 @@ class AltProfileHelper with ChangeNotifier {
                                 }
                               },
                             ),
-                            // Text(
-                            //   '0',
-                            //   style: TextStyle(
-                            //     color: whiteColor,
-                            //     fontWeight: FontWeight.bold,
-                            //     fontSize: 28.0,
-                            //   ),
-                            // ),
                             Text(
                               'Posts',
                               style: TextStyle(
@@ -293,53 +288,103 @@ class AltProfileHelper with ChangeNotifier {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                MaterialButton(
-                  onPressed: () {
-                    Provider.of<FirebaseOperation>(context, listen: false)
-                        .followUser(
-                      userUID,
-                      Provider.of<Authentication>(context, listen: false)
-                          .getUserId,
-                      {
-                        'username': Provider.of<FirebaseOperation>(context,
-                                listen: false)
-                            .getInitUserName,
-                        'useremail': Provider.of<FirebaseOperation>(context,
-                                listen: false)
-                            .getInitUserEmail,
-                        'userimage': Provider.of<FirebaseOperation>(context,
-                                listen: false)
-                            .getInitUserImage,
-                        'useruid':
-                            Provider.of<Authentication>(context, listen: false)
-                                .getUserId,
-                        'time': Timestamp.now(),
-                      },
-                      Provider.of<Authentication>(context, listen: false)
-                          .getUserId,
-                      userUID,
-                      {
-                        'username': snapshot.data!['username'],
-                        'useremail': snapshot.data!['useremail'],
-                        'userimage': snapshot.data!['userimage'],
-                        'useruid': snapshot.data!['userId'],
-                        'time': Timestamp.now(),
-                      },
-                    )
-                        .whenComplete(() {
-                      followedNotification(
-                          context, 'Following ${snapshot.data!['username']}');
-                    });
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(Provider.of<Authentication>(context, listen: false)
+                          .getUserId)
+                      .collection('following')
+                      .snapshots(),
+                  builder: (context, followingSnapshots) {
+                    if (followingSnapshots.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      followingSnapshots.data!.docs
+                          .map((DocumentSnapshot followingDoc) {
+                        //ignore: avoid_print
+                        print('following doc id : ${followingDoc.id}');
+                        if (followingDoc.id == userUID) {
+                          isFollow = true; 
+                        }
+                      });
+
+                      if (isFollow) {
+                        return MaterialButton(
+                          onPressed: () {
+                            Provider.of<FirebaseOperation>(context,
+                                    listen: false)
+                                .followUser(
+                              userUID,
+                              Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserId,
+                              {
+                                'username': Provider.of<FirebaseOperation>(
+                                        context,
+                                        listen: false)
+                                    .getInitUserName,
+                                'useremail': Provider.of<FirebaseOperation>(
+                                        context,
+                                        listen: false)
+                                    .getInitUserEmail,
+                                'userimage': Provider.of<FirebaseOperation>(
+                                        context,
+                                        listen: false)
+                                    .getInitUserImage,
+                                'useruid': Provider.of<Authentication>(context,
+                                        listen: false)
+                                    .getUserId,
+                                'time': Timestamp.now(),
+                              },
+                              Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .getUserId,
+                              userUID,
+                              {
+                                'username': snapshot.data!['username'],
+                                'useremail': snapshot.data!['useremail'],
+                                'userimage': snapshot.data!['userimage'],
+                                'useruid': snapshot.data!['userId'],
+                                'time': Timestamp.now(),
+                              },
+                            )
+                                .whenComplete(() {
+                              followedNotification(context,
+                                  'Following ${snapshot.data!['username']}');
+                            });
+                          },
+                          color: blueColor,
+                          child: Text(
+                            'Follow',
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return MaterialButton(
+                          onPressed: () {
+                            // ignore: avoid_print
+                            print('unfollow pressed ! ');
+                          },
+                          color: blueColor,
+                          child: Text(
+                            'Following',
+                            style: TextStyle(
+                              color: whiteColor,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      }
+                    }
                   },
-                  color: blueColor,
-                  child: Text(
-                    'Follow',
-                    style: TextStyle(
-                      color: whiteColor,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ),
                 MaterialButton(
                   onPressed: () {
@@ -347,16 +392,18 @@ class AltProfileHelper with ChangeNotifier {
                         .collection('users')
                         .doc(userUID)
                         .get()
-                        .then((DocumentSnapshot document) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatMessage(
-                            userDocument: document,
+                        .then(
+                      (DocumentSnapshot document) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatMessage(
+                              userDocument: document,
+                            ),
                           ),
-                        ),
-                      );
-                    });
+                        );
+                      },
+                    );
                   },
                   color: blueColor,
                   child: Text(
@@ -623,5 +670,21 @@ class AltProfileHelper with ChangeNotifier {
             ),
           );
         });
+  }
+
+  isFollowing(BuildContext context, String currentUser, String altUser) async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser)
+            .collection('follower')
+            .doc(altUser)
+            .get();
+
+    if (documentSnapshot.exists) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

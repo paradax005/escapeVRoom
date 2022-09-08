@@ -3,7 +3,7 @@
     <queries>
         <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
     </queries>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="escaperoom"
         android:name="${applicationName}"
